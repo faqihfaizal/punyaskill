@@ -1,0 +1,35 @@
+import React from 'react'
+
+import { Routes, Route, Navigate } from 'react-router-dom'
+
+import UniversityLayout from './layouts/University'
+
+import StudentProfile from './views/university/Student/StudentProfile'
+
+import Student from './views/university/Student/Student'
+
+
+
+// basic routing: root -> university layout
+
+export default function App(){
+
+  return (
+
+    <Routes>
+
+      <Route path='/*' element={<UniversityLayout />}>
+
+        <Route index element={<Navigate to='students' replace />} />
+
+        <Route path='students' element={<Student />} />
+
+        <Route path='students/:id' element={<StudentProfile />} />
+
+      </Route>
+
+    </Routes>
+
+  )
+
+}
