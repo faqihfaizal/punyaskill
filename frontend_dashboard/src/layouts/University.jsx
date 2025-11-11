@@ -8,7 +8,7 @@ import {
   Outlet, // Mengganti Switch dengan Routes (RRD v6)
 } from "react-router-dom";
 
-import { Header, Footer, Sidebar, ChatSidebar, Stylebar } from "components";
+import { Header, Footer, Sidebar, Stylebar } from "components";
 
 import dashboardRoutes from "routes/university.jsx";
 import {
@@ -106,12 +106,7 @@ class UniversityLayout extends React.Component {
           </Routes>
           <Footer fluid />
         </div>
-        <ChatSidebar
-          {...this.props}
-          routes={dashboardRoutes}
-          chatwidth={chatWidth}
-          chattype={chatType}
-        />
+        
         <Stylebar
           menuSettings={this.menuSettings}
           topbarSettings={this.topbarSettings}

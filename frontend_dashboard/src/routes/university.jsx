@@ -38,17 +38,17 @@ import StudentProfile from 'views/university/Student/StudentProfile.jsx';
 
 
 
-import Staff from 'views/university/Staff/Staff.jsx';
+// import Staff from 'views/university/Staff/Staff.jsx';
 
-import AddStaff from 'views/university/Staff/AddStaff.jsx';
+// import AddStaff from 'views/university/Staff/AddStaff.jsx';
 
-import EditStaff from 'views/university/Staff/EditStaff.jsx';
+// import EditStaff from 'views/university/Staff/EditStaff.jsx';
 
-import StaffProfile from 'views/university/Staff/StaffProfile.jsx';
+// import StaffProfile from 'views/university/Staff/StaffProfile.jsx';
 
 
 
-import UniversityCentres from 'views/university/Centres/UniversityCentres.jsx';
+// import UniversityCentres from 'views/university/Centres/UniversityCentres.jsx';
 
 
 
@@ -64,43 +64,43 @@ import CourseView from 'views/university/Course/CourseView.jsx';
 
 
 
-import Library from 'views/university/Library/Library.jsx';
+// import Library from 'views/university/Library/Library.jsx';
 
-import AddLibrary from 'views/university/Library/AddLibrary.jsx';
+// import AddLibrary from 'views/university/Library/AddLibrary.jsx';
 
-import EditLibrary from 'views/university/Library/EditLibrary.jsx';
-
-
+// import EditLibrary from 'views/university/Library/EditLibrary.jsx';
 
 
 
-import Department from 'views/university/Department/Department.jsx';
-
-import AddDepartment from 'views/university/Department/AddDepartment.jsx';
-
-import EditDepartment from 'views/university/Department/EditDepartment.jsx';
 
 
+// import Department from 'views/university/Department/Department.jsx';
 
-import UniversityEvents from 'views/university/Events/UniversityEvents.jsx';
+// import AddDepartment from 'views/university/Department/AddDepartment.jsx';
 
-import AddEvent from 'views/university/Events/AddEvent.jsx';
+// import EditDepartment from 'views/university/Department/EditDepartment.jsx';
 
 
 
-import UniversityMailinbox from 'views/university/Mail/Inbox.jsx';
+// import UniversityEvents from 'views/university/Events/UniversityEvents.jsx';
 
-import UniversityMailcompose from 'views/university/Mail/Compose.jsx';
-
-import UniversityMailview from 'views/university/Mail/View.jsx';
+// import AddEvent from 'views/university/Events/AddEvent.jsx';
 
 
 
-import UniversityReportsDepartment from 'views/university/Reports/ReportsDepartment.jsx';
+// import UniversityMailinbox from 'views/university/Mail/Inbox.jsx';
 
-import UniversityReportsStudents from 'views/university/Reports/ReportsStudent.jsx';
+// import UniversityMailcompose from 'views/university/Mail/Compose.jsx';
 
-import UniversityReportsUniversity from 'views/university/Reports/ReportsUniversity.jsx';
+// import UniversityMailview from 'views/university/Mail/View.jsx';
+
+
+
+// import UniversityReportsDepartment from 'views/university/Reports/ReportsDepartment.jsx';
+
+// import UniversityReportsStudents from 'views/university/Reports/ReportsStudent.jsx';
+
+// import UniversityReportsUniversity from 'views/university/Reports/ReportsUniversity.jsx';
 
 
 
@@ -174,61 +174,61 @@ var dashRoutes = [
 
 
 
-    {
+    // {
 
-        path: "#", name: "Staffs", icon: "user-female", type: "dropdown", parentid: "staffs",
+    //     path: "#", name: "Staffs", icon: "user-female", type: "dropdown", parentid: "staffs",
 
-            child: [
+    //         child: [
 
-                { path: BASEDIR+"/university/staffs", name: "Staffs"},
+    //             { path: BASEDIR+"/university/staffs", name: "Staffs"},
 
-                { path: BASEDIR+"/university/add-staff", name: "Add Staff"},
+    //             { path: BASEDIR+"/university/add-staff", name: "Add Staff"},
 
-                { path: BASEDIR+"/university/edit-staff", name: "Edit Staff"},
+    //             { path: BASEDIR+"/university/edit-staff", name: "Edit Staff"},
 
-                { path: BASEDIR+"/university/staff-profile", name: "Staff Profile"},
+    //             { path: BASEDIR+"/university/staff-profile", name: "Staff Profile"},
 
-            ]
+    //         ]
 
-    },
+    // },
 
-        { path: BASEDIR+"/university/staffs", component: Staff, type: "child"},
+    //     { path: BASEDIR+"/university/staffs", component: Staff, type: "child"},
 
-        { path: BASEDIR+"/university/add-staff", component: AddStaff, type: "child"},
+    //     { path: BASEDIR+"/university/add-staff", component: AddStaff, type: "child"},
 
-        { path: BASEDIR+"/university/edit-staff", component: EditStaff, type: "child"},
+    //     { path: BASEDIR+"/university/edit-staff", component: EditStaff, type: "child"},
 
-        { path: BASEDIR+"/university/staff-profile", component: StaffProfile, type: "child"},
-
-
+    //     { path: BASEDIR+"/university/staff-profile", component: StaffProfile, type: "child"},
 
 
 
-  {
-
-        path: "#", name: "Reports", icon: "chart", type: "dropdown", parentid: "reports",
-
-        child: [
-
-                    { path: BASEDIR+"/university/reports-department", name: "Department"},
-
-                    { path: BASEDIR+"/university/reports-students", name: "Students"},
-
-                    { path: BASEDIR+"/university/reports-university", name: "University"},
-
-        ]
-
-    },
-
-    { path: BASEDIR+"/university/reports-department", component: UniversityReportsDepartment, type: "child"},
-
-    { path: BASEDIR+"/university/reports-students", component: UniversityReportsStudents, type: "child"},
-
-    { path: BASEDIR+"/university/reports-university", component: UniversityReportsUniversity, type: "child"},
 
 
+//   {
 
-    { path: BASEDIR+"/university/centres", name: "University Centres", icon: "map", component: UniversityCentres },
+//         path: "#", name: "Reports", icon: "chart", type: "dropdown", parentid: "reports",
+
+//         child: [
+
+//                     // { path: BASEDIR+"/university/reports-department", name: "Department"},
+
+//                     { path: BASEDIR+"/university/reports-students", name: "Students"},
+
+//                     { path: BASEDIR+"/university/reports-university", name: "University"},
+
+//         ]
+
+//     },
+
+//     // { path: BASEDIR+"/university/reports-department", component: UniversityReportsDepartment, type: "child"},
+
+//     { path: BASEDIR+"/university/reports-students", component: UniversityReportsStudents, type: "child"},
+
+//     { path: BASEDIR+"/university/reports-university", component: UniversityReportsUniversity, type: "child"},
+
+
+
+//     { path: BASEDIR+"/university/centres", name: "University Centres", icon: "map", component: UniversityCentres },
 
 
 
@@ -264,133 +264,133 @@ var dashRoutes = [
 
 
 
-    {
+    // {
 
-        path: "#", name: "Library", icon: "notebook", type: "dropdown", parentid: "library",
+    //     path: "#", name: "Library", icon: "notebook", type: "dropdown", parentid: "library",
 
-            child: [
+    //         child: [
 
-                { path: BASEDIR+"/university/library", name: "Library Assets"},
+    //             { path: BASEDIR+"/university/library", name: "Library Assets"},
 
-                { path: BASEDIR+"/university/add-library", name: "Add Library"},
+    //             { path: BASEDIR+"/university/add-library", name: "Add Library"},
 
-                { path: BASEDIR+"/university/edit-library", name: "Edit Library"},
+    //             { path: BASEDIR+"/university/edit-library", name: "Edit Library"},
 
-            ]
+    //         ]
 
-    },
+    // },
 
-        { path: BASEDIR+"/university/library", component: Library, type: "child"},
+        // { path: BASEDIR+"/university/library", component: Library, type: "child"},
 
-        { path: BASEDIR+"/university/add-library", component: AddLibrary, type: "child"},
+        // { path: BASEDIR+"/university/add-library", component: AddLibrary, type: "child"},
 
-        { path: BASEDIR+"/university/edit-library", component: EditLibrary, type: "child"},
-
-
-
-
-
-    {
-
-        path: "#", name: "Departments", icon: "organization", type: "dropdown", parentid: "departments",
-
-            child: [
-
-                { path: BASEDIR+"/university/department", name: "Departments"},
-
-                { path: BASEDIR+"/university/add-department", name: "Add Department"},
-
-                { path: BASEDIR+"/university/edit-department", name: "Edit Department"},
-
-            ]
-
-    },
-
-        { path: BASEDIR+"/university/department", component: Department, type: "child"},
-
-        { path: BASEDIR+"/university/add-department", component: AddDepartment, type: "child"},
-
-        { path: BASEDIR+"/university/edit-department", component: EditDepartment, type: "child"},
+        // { path: BASEDIR+"/university/edit-library", component: EditLibrary, type: "child"},
 
 
 
 
 
+    // {
+
+    //     path: "#", name: "Departments", icon: "organization", type: "dropdown", parentid: "departments",
+
+    //         child: [
+
+    //             { path: BASEDIR+"/university/department", name: "Departments"},
+
+    //             { path: BASEDIR+"/university/add-department", name: "Add Department"},
+
+    //             { path: BASEDIR+"/university/edit-department", name: "Edit Department"},
+
+    //         ]
+
+    // },
+
+        // { path: BASEDIR+"/university/department", component: Department, type: "child"},
+
+        // { path: BASEDIR+"/university/add-department", component: AddDepartment, type: "child"},
+
+        // { path: BASEDIR+"/university/edit-department", component: EditDepartment, type: "child"},
 
 
-    {
-
-        path: "#", name: "Events", icon: "event", type: "dropdown", parentid: "events",
-
-            child: [
-
-                { path: BASEDIR+"/university/events", name: "Events"},
-
-                { path: BASEDIR+"/university/addevent", name: "Add Event"},
-
-            ]
-
-    },
-
-        { path: BASEDIR+"/university/events", component: UniversityEvents, type: "child"},
-
-        { path: BASEDIR+"/university/addevent", component: AddEvent, type: "child"},
 
 
 
-    {
 
-        path: "#", name: "Mail Box", icon: "envelope", type: "dropdown", parentid: "mailbox",
 
-        child: [
+    // {
 
-            { path: BASEDIR+"/university/mail-inbox", name: "Inbox"},
+    //     path: "#", name: "Events", icon: "event", type: "dropdown", parentid: "events",
 
-            { path: BASEDIR+"/university/mail-compose", name: "Compose"},
+    //         child: [
 
-            { path: BASEDIR+"/university/mail-view", name: "View"},
+    //             { path: BASEDIR+"/university/events", name: "Events"},
 
-        ]
+    //             { path: BASEDIR+"/university/addevent", name: "Add Event"},
 
-    },
+    //         ]
 
-    { path: BASEDIR+"/university/mail-inbox", component: UniversityMailinbox, type: "child"},
+    // },
 
-    { path: BASEDIR+"/university/mail-compose", component: UniversityMailcompose, type: "child"},
+    //     { path: BASEDIR+"/university/events", component: UniversityEvents, type: "child"},
 
-    { path: BASEDIR+"/university/mail-view", component: UniversityMailview, type: "child"},
+    //     { path: BASEDIR+"/university/addevent", component: AddEvent, type: "child"},
+
+
+
+    // {
+
+    //     path: "#", name: "Mail Box", icon: "envelope", type: "dropdown", parentid: "mailbox",
+
+    //     child: [
+
+    //         { path: BASEDIR+"/university/mail-inbox", name: "Inbox"},
+
+    //         { path: BASEDIR+"/university/mail-compose", name: "Compose"},
+
+    //         { path: BASEDIR+"/university/mail-view", name: "View"},
+
+    //     ]
+
+    // },
+
+    // { path: BASEDIR+"/university/mail-inbox", component: UniversityMailinbox, type: "child"},
+
+    // { path: BASEDIR+"/university/mail-compose", component: UniversityMailcompose, type: "child"},
+
+    // { path: BASEDIR+"/university/mail-view", component: UniversityMailview, type: "child"},
 
    
 
 
 
-    {
+    // {
 
-        path: "#", name: "Multi Purpose", icon: "layers", type: "dropdown", parentid: "multipurpose",
+    //     path: "#", name: "Multi Purpose", icon: "layers", type: "dropdown", parentid: "multipurpose",
 
-            child: [
+    //         child: [
 
-                // { path: BASEDIR+"/dashboard", name: "General"},
+    //             // { path: BASEDIR+"/dashboard", name: "General"},
 
-                // { path: BASEDIR+"/hospital/dashboard", name: "Hospital"},
+    //             // { path: BASEDIR+"/hospital/dashboard", name: "Hospital"},
 
-                // { path: BASEDIR+"/music/dashboard", name: "Music"},
+    //             // { path: BASEDIR+"/music/dashboard", name: "Music"},
 
-                // { path: BASEDIR+"/crm/dashboard", name: "CRM"},
+    //             // { path: BASEDIR+"/crm/dashboard", name: "CRM"},
 
-                // { path: BASEDIR+"/social/dashboard", name: "Social Media"},
+    //             // { path: BASEDIR+"/social/dashboard", name: "Social Media"},
 
-                // { path: BASEDIR+"/freelance/dashboard", name: "Freelance"},
+    //             // { path: BASEDIR+"/freelance/dashboard", name: "Freelance"},
 
-                { path: BASEDIR+"/university/dashboard", name: "University"},
+    //             { path: BASEDIR+"/university/dashboard", name: "University"},
 
-                // { path: BASEDIR+"/ecommerce/dashboard", name: "Ecommerce"},
+    //             // { path: BASEDIR+"/ecommerce/dashboard", name: "Ecommerce"},
 
-                // { path: BASEDIR+"/blog/dashboard", name: "Blog"},
+    //             // { path: BASEDIR+"/blog/dashboard", name: "Blog"},
 
-            ]
+    //         ]
 
-    },
+    // },
 
 
 

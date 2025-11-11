@@ -3,24 +3,26 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 
 import UniversityLayout from './layouts/University'
 
-// Impor Student (Sudah ada)
+// --- Impor Student ---
+import Student from 'views/university/Student/Student.jsx';
+import AddStudent from 'views/university/Student/AddStudent.jsx'; // 👈 Tambahkan ini
+import EditStudent from 'views/university/Student/EditStudent.jsx'; // 👈 Tambahkan ini
 import StudentProfile from './views/university/Student/StudentProfile'
-import Student from './views/university/Student/Student'
+
+// --- Impor Professor ---
+import Professor from 'views/university/Professor/Professor.jsx'; 
+import AddProfessor from 'views/university/Professor/AddProfessor.jsx'; // 👈 Tambahkan ini
+import EditProfessor from './views/university/Professor/EditProfessor.jsx';
+import ProfessorProfile from 'views/university/Professor/ProfessorProfile.jsx';
 
 // =========================================================================
 // !! TAMBAHKAN IMPOR DI BAWAH INI !!
 // (Path ini diambil dari file university.jsx Anda)
 // =========================================================================
-
-// Ini adalah komponen Professorslist.jsx Anda
-// (di file university.jsx Anda, ini diimpor sebagai 'Professor')
-import Professor from 'views/university/Professor/Professor.jsx'; 
-
-// Ini adalah komponen EditProfessor.jsx Anda
-import EditProfessor from 'views/university/Professor/EditProfessor.jsx';
-
-// Ini adalah komponen Profile (untuk NavLink di nama instruktur)
-import ProfessorProfile from 'views/university/Professor/ProfessorProfile.jsx';
+import Course from 'views/university/Course/Course.jsx';
+import AddCourse from 'views/university/Course/AddCourse.jsx';
+import EditCourse from 'views/university/Course/EditCourse.jsx';
+import CourseView from 'views/university/Course/CourseView.jsx';
 // =========================================================================
 
 
@@ -29,43 +31,47 @@ export default function App(){
 
   return (
     <Routes>
-      {/* Route ini menangkap semua URL dan menampilkannya 
-        DI DALAM UniversityLayout 
-      */}
+      {/* Route ini menangkap semua URL dan menampilkannya 
+        DI DALAM UniversityLayout 
+      */}
       <Route path='/*' element={<UniversityLayout />}>
 
-        <Route index element={<Navigate to='students' replace />} />
+        {/* Ubah 'index' agar mengarah ke 'university/dashboard' 
+          atau biarkan ke 'university/students' jika itu yang Anda mau
+        */}
+        <Route index element={<Navigate to='university/students' replace />} />
 
-        {/* Rute Student Anda (Biarkan saja) */}
-        <Route path='students' element={<Student />} />
-        <Route path='students/:id' element={<StudentProfile />} />
+        {/* --- Rute Student (Lengkap) --- */}
+        {/* Path Anda harus lengkap 'university/...' agar konsisten 
+          dengan file university.jsx
+        */}
+        <Route path='university/students' element={<Student />} />
+        <Route path='university/add-student' element={<AddStudent />} />
+        {/* Asumsi 'edit-student' dan 'student-profile' menggunakan :id */}
+        <Route path='university/edit-student/:id' element={<EditStudent />} /> 
+        <Route path='university/student-profile/:id' element={<StudentProfile />} />
+
+        {/* --- Rute Professor (Lengkap) --- */}
+        <Route path='university/professors' element={<Professor />} />
+        <Route path='university/add-professor' element={<AddProfessor />} />
+        {/* Path ini sudah benar sesuai link Anda: 'admin/university/edit-professor/:id'
+          Ini sedikit tidak konsisten, tapi kita ikuti yang sudah jalan
+        */}
+        <Route path='admin/university/edit-professor/:id' element={<EditProfessor />} />
+        <Route path='university/professor-profile/:id' element={<ProfessorProfile />} />
 
         {/* ======================================================== */}
-        {/* !! TAMBAHKAN RUTE BARU DI BAWAH INI !!                  */}
+        {/* !! TAMBAHKAN RUTE COURSE BARU DI BAWAH INI !!            */}
         {/* ======================================================== */}
 
-        {/* 1. Rute untuk menampilkan daftar instruktur (Professorslist.jsx) */}
-        <Route path='professors' element={<Professor />} />
-
-        {/* 2. Rute untuk halaman EDIT.
-             Path ini HARUS SAMA PERSIS dengan link di Professorslist.jsx
-             Link Anda: /university/professors/edit/:id
-             Karena 'App.jsx' menangani '/*', kita harus menulis path lengkapnya
-             agar cocok.
+        <Route path='university/courses' element={<Course />} />
+        <Route path='university/add-course' element={<AddCourse />} />
+        
+        {/* PENTING: Controller dan Courselist Anda menggunakan :slug.
+          Jadi, kita harus pakai :slug di sini agar dinamis.
         */}
-        <Route 
-  // SAMAKAN DENGAN LINK ANDA
-  path='university/edit-professor/:id' 
-  element={<EditProfessor />} 
-/>
-
-        {/* 3. Rute untuk halaman PROFIL (dari NavLink di nama instruktur)
-             Link Anda: /university/professor-profile/:id
-        */}
-        <Route 
-          path='university/professor-profile/:id' 
-          element={<ProfessorProfile />} 
-        />
+        <Route path='university/edit-course/:slug' element={<EditCourse />} />
+        <Route path='university/course-view/:slug' element={<CourseView />} />
         {/* ======================================================== */}
         {/* !! AKHIR TAMBAHAN !!                                  */}
         {/* ======================================================== */}

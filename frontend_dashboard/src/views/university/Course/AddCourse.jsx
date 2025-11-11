@@ -1,247 +1,272 @@
 import React from 'react';
 import {
-    Row, Col, Label, Input,
+  Row, Col, Label, Input,
 } from 'reactstrap';
-
-import InputMask from 'react-input-mask';
-
+import api from "../../../services/api"; // <--- pastikan path sesuai
 import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
 
-class AddCourse extends React.Component{
-    constructor (props) {
-    super(props)
+class AddCourse extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      startDate: moment()
+      formData: {
+        id_instruktur: '',
+        title: '',
+        slug: '',
+        thumbnail: '',
+        description: '',
+        duration: '',
+        student_count: 0,
+        video_length: '',
+        skill_level: 'Beginner',
+        price: '',
+        rating: 0
+      },
+      isLoading: false,
+      successMessage: '',
+      error: ''
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(date) {
-    this.setState({
-      startDate: date
-    });
+  handleChange(e) {
+    const { name, value, type } = e.target;
+
+    // Jangan ubah state langsung untuk file input
+    if (type === 'file') return;
+
+    this.setState(prevState => ({
+      formData: {
+        ...prevState.formData,
+        [name]: value
+      }
+    }));
   }
 
-    render(){
+  async handleSubmit(e) {
+    e.preventDefault();
 
-        return (
-            <div>
-                <div className="content">
-                    <Row>
-                        <Col xs={12} md={12}>
+    try {
+      this.setState({ isLoading: true, error: null, successMessage: '' });
 
-                    <div className="page-title">
-                        <div className="float-left">
-                            <h1 className="title">Add Course</h1>
-                        </div>
-                    </div>
+      const { title, description, duration } = this.state.formData;
+      if (!title || !description || !duration) {
+        throw new Error('Title, description and duration are required');
+      }
 
+      const formData = new FormData();
+      Object.keys(this.state.formData).forEach(key => {
+        formData.append(key, this.state.formData[key]);
+      });
 
-                            
+      const thumbnailInput = document.querySelector('#thumbnail');
+      if (thumbnailInput && thumbnailInput.files[0]) {
+        formData.set('thumbnail', thumbnailInput.files[0]); // pakai set biar gak dobel
+      }
 
+      // 🚀 Axios request
+      const res = await api.post('/api/course/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-                    <div className="row margin-0">
-                        <div className="col-12">
-                            <section className="box ">
-                                <header className="panel_header">
-                                    <h2 className="title float-left">Basic Info</h2>
-                                    
-                                </header>
-                                <div className="content-body">
-                                    <div className="row">
-                                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
+      this.setState({
+        successMessage: 'Course created successfully!',
+        isLoading: false,
+        error: ''
+      });
 
-                                            <form>
-                                                <div className="form-row">
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname4">Course Name</label>
-                                                        <input type="text" className="form-control" id="inputname4" placeholder="" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label>Course Start date</label>
-                                                        <div className="controls">
-                                                            <DatePicker selected={this.state.startDate} onChange={this.handleChange} />
-                                                        </div>
-                                                   </div>
+      window.location.href = "http://localhost:3000/admin/university/courses";
+      console.log('Response:', res.data);
 
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname45">Course time length</label>
-                                                        <input type="text" className="form-control" id="inputname45" placeholder="" />
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                      <Label htmlFor="exampleSelect3">Department</Label>
-                                                      <Input type="select" name="select" id="exampleSelect3">
-                                                        <option>Select</option>
-                                                            <option value="Computer Engineering">Computer Engineering</option>
-                                                            <option value="Architecture">Architecture</option>
-                                                            <option value="MBA">MBA</option>
-                                                            <option value="Automobile Engg.">Automobile Engg.</option>
-                                                            <option value="Civil Engg.">Civil Engg.</option>
-                                                            <option value="Mechanical Engg.">Mechanical Engg.</option>
-                                                            <option value="BBA">BBA</option>
-                                                      </Input>
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname4121">For Students of Year</label>
-                                                        <input type="text" className="form-control" id="inputname4121" placeholder=""/>
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname4121">Professor</label>
-                                                        <input type="text" className="form-control" id="inputname4121" placeholder=""/>
-                                                    </div>
-
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname41421">Course Price</label>
-                                                        <input type="text" className="form-control" id="inputname41421" placeholder=""/>
-                                                    </div>
-
-
-                                                    <div className="form-group col-md-12">
-                                                      <Label htmlFor="exampleText">Brief</Label>
-                                                      <Input type="textarea" name="text" id="exampleText" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                      <Label htmlFor="exampleFile">Course Image</Label>
-                                                      <Input type="file" name="file" id="exampleFile" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input4">Website</label>
-                                                        <input type="text" className="form-control" id="input4" placeholder="" />
-                                                    </div>
-
-                                                </div>
-                                                <button type="submit" className="btn btn-primary">Save</button>
-                                            </form>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </section></div>
-
-
-                        <div className="col-12">
-                            <section className="box ">
-                                <header className="panel_header">
-                                    <h2 className="title float-left">Course Location Info</h2>
-                                </header>
-                                <div className="content-body">
-                                    <div className="row">
-                                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
-
-                                            <form>
-                                                <div className="form-row">
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputEmail4">Email</label>
-                                                        <input type="email" className="form-control" id="inputEmail4" placeholder="" />
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                       <Label htmlFor="field-11">Phone (+49 99 999 99)</Label>
-                                                       <InputMask id="field-11" className="form-control" mask="+4\9 99 999 99" maskChar="_" />
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputAddress">Address</label>
-                                                        <input type="text" className="form-control" id="inputAddress" placeholder="1234 Main St"/>
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputAddress2">Address 2</label>
-                                                        <input type="text" className="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor"/>
-                                                    </div>
-
-                                                    <div className="col-md-12">
-                                                    <div className="form-row">
-                                                        <div className="form-group col-md-6">
-                                                            <label htmlFor="inputCity">City</label>
-                                                            <input type="text" className="form-control" id="inputCity"/>
-                                                        </div>
-                                                        <div className="form-group col-md-4">
-                                                            <label htmlFor="inputState">State</label>
-                                                            <select id="inputState" className="form-control">
-                                                                <option>Select</option>
-                                                                <option>...</option>
-                                                            </select>
-                                                        </div>
-                                                        <div className="form-group col-md-2">
-                                                            <label htmlFor="inputZip">Zip</label>
-                                                            <input type="text" className="form-control" id="inputZip"/>
-                                                        </div>
-                                                    </div>                                                    
-                                                    </div>                                                    
-
-
-                                                </div>
-                                                <button type="submit" className="btn btn-primary">Save</button>
-                                            </form>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </section></div>
-
-
-
-
-
-                        <div className="col-12">
-                            <section className="box ">
-                                <header className="panel_header">
-                                    <h2 className="title float-left">Social Media Info</h2>
-                                </header>
-                                <div className="content-body">
-                                    <div className="row">
-                                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
-
-                                            <form>
-                                                <div className="form-row">
-                                                    
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input24">Facebook URL</label>
-                                                        <input type="text" className="form-control" id="input24" placeholder="" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input241">Twitter URL</label>
-                                                        <input type="text" className="form-control" id="input241" placeholder="" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input242">Linkedin URL</label>
-                                                        <input type="text" className="form-control" id="input242" placeholder="" />
-                                                    </div>
-                                                    
-                                                </div>
-                                                <button type="submit" className="btn btn-primary">Save</button>
-                                            </form>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </section></div>
-
-
-                    </div>
-
-
-
-
-
-
-                                
-                        </Col>
-
-                    </Row>
-                </div>
-            </div>
-        );
+    } catch (error) {
+      console.error('Submit error:', error);
+      this.setState({
+        error: error.response?.data?.message || error.message || 'Something went wrong',
+        isLoading: false
+      });
     }
+  }
+
+  render() {
+    const { isLoading, error, successMessage } = this.state;
+
+    return (
+      <div>
+        <div className="content">
+          <Row>
+            <Col xs={12} md={12}>
+
+              <div className="page-title">
+                <div className="float-left">
+                  <h1 className="title">Add Course</h1>
+                </div>
+              </div>
+
+              <div className="row margin-0">
+                <div className="col-12">
+                  <section className="box ">
+                    <header className="panel_header">
+                      <h2 className="title float-left">Basic Info</h2>
+                    </header>
+                    <div className="content-body">
+                      <div className="row">
+                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
+
+                          <form onSubmit={this.handleSubmit}>
+                            <div className="form-row">
+                              <div className="form-group col-md-12">
+                                <label htmlFor="id_instruktur">Instructor ID</label>
+                                <input
+                                  type="number"
+                                  className="form-control"
+                                  id="id_instruktur"
+                                  name="id_instruktur"
+                                  value={this.state.formData.id_instruktur}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <label htmlFor="title">Course Title</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="title"
+                                  name="title"
+                                  value={this.state.formData.title}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <label htmlFor="slug">Slug</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="slug"
+                                  name="slug"
+                                  value={this.state.formData.slug}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <Label htmlFor="thumbnail">Course Thumbnail</Label>
+                                <Input
+                                  type="file"
+                                  name="thumbnail"
+                                  id="thumbnail"
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <Label htmlFor="description">Description</Label>
+                                <Input
+                                  type="textarea"
+                                  name="description"
+                                  id="description"
+                                  value={this.state.formData.description}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <label htmlFor="duration">Duration</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="duration"
+                                  name="duration"
+                                  value={this.state.formData.duration}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <label htmlFor="video_length">Video Length</label>
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  id="video_length"
+                                  name="video_length"
+                                  value={this.state.formData.video_length}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <Label htmlFor="skill_level">Skill Level</Label>
+                                <Input
+                                  type="select"
+                                  name="skill_level"
+                                  id="skill_level"
+                                  value={this.state.formData.skill_level}
+                                  onChange={this.handleChange}
+                                >
+                                  <option value="Beginner">Beginner</option>
+                                  <option value="Intermediate">Intermediate</option>
+                                  <option value="Advanced">Advanced</option>
+                                </Input>
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <label htmlFor="price">Price</label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  className="form-control"
+                                  id="price"
+                                  name="price"
+                                  value={this.state.formData.price}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+
+                              <div className="form-group col-md-12">
+                                <label htmlFor="rating">Rating</label>
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  max="5"
+                                  className="form-control"
+                                  id="rating"
+                                  name="rating"
+                                  value={this.state.formData.rating}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+                            </div>
+
+                            {error && <p className="text-danger mt-2">{error}</p>}
+                            {successMessage && <p className="text-success mt-2">{successMessage}</p>}
+
+                            <button
+                              type="submit"
+                              className="btn btn-primary"
+                              disabled={isLoading}
+                            >
+                              {isLoading ? 'Saving...' : 'Save'}
+                            </button>
+                          </form>
+
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+
+            </Col>
+          </Row>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default AddCourse;

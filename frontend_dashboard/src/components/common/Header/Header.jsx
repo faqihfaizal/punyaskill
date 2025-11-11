@@ -4,23 +4,15 @@ import {
   Navbar,
   NavbarBrand,
   Nav,
-  NavItem,
   Dropdown,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
   Container,
-  InputGroup,
-  InputGroupText,
-  Input, // InputGroupAddon diganti dengan InputGroupText
 } from "reactstrap";
 
-import { Messages, Notifications } from "components";
+import dashboardRoutes from "routes/university.jsx"; // route lama tetap dipakai
 
-// gunakan routes khusus university (pastikan alias 'routes' ada di vite.config.js)
-import dashboardRoutes from "routes/university.jsx";
-
-// gunakan Vite env var (jika tidak di-set, fallback ke empty string)
 const IMGDIR = import.meta.env.VITE_IMGDIR || "";
 
 class Header extends React.Component {
@@ -28,61 +20,57 @@ class Header extends React.Component {
     super(props);
     this.sidebarToggle = React.createRef();
     this.chatToggle = React.createRef();
+
     this.state = {
       isOpen: false,
       userddOpen: false,
-      searchOpen: false,
-      messagesddOpen: false,
-      notificationsddOpen: false,
       color: "primary",
-      profilename: "Eric Nelson",
-      profileimg: "/images/profile/profile.jpg",
+      profilename: "User",
+      profileimg: "/images/profile/profile-university.jpg",
     };
+
     this.toggle = this.toggle.bind(this);
     this.userddToggle = this.userddToggle.bind(this);
-
+    this.logout = this.logout.bind(this);
   }
 
+  // toggle navbar
   toggle() {
     this.setState((prev) => ({
       isOpen: !prev.isOpen,
       color: prev.isOpen ? "primary" : "white",
     }));
   }
+
   userddToggle() {
     this.setState((prev) => ({ userddOpen: !prev.userddOpen }));
   }
-  searchToggle() {
-    this.setState((prev) => ({ searchOpen: !this.state.searchOpen }));
-  }
-  messagesddToggle() {
-    this.setState((prev) => ({ messagesddOpen: !prev.messagesddOpen }));
-  }
-  notificationsddToggle() {
-    this.setState((prev) => ({
-      notificationsddOpen: !prev.notificationsddOpen,
-    }));
+
+  // fungsi logout
+  logout() {
+    localStorage.removeItem("user");
+    window.location.href = "http://localhost:5173/login"; // arahkan ke halaman login
   }
 
-  // helper: match route path to current pathname (flexible: exact or endsWith last 1-2 segments)
+  // match route name untuk brand title
   _matchPath(routePath = "", pathname = "") {
     if (!routePath) return false;
     try {
-      // normalize
       const rp = String(routePath);
       const pn = String(pathname);
       if (pn === rp) return true;
-      // check last two segments (e.g. "university/professors")
+
       const parts = rp.split("/").filter(Boolean);
       if (parts.length === 0) return false;
+
       const last = parts.slice(-2).join("/");
       if (last && pn.endsWith("/" + last)) return true;
+
       const last1 = parts.slice(-1)[0];
-      if (last1 && (pn.endsWith("/" + last1) || pn === "/" + last1))
-        return true;
-      // fallback: contains (less strict)
+      if (last1 && (pn.endsWith("/" + last1) || pn === "/" + last1)) return true;
+
       if (rp && pn.indexOf(last) !== -1) return true;
-    } catch (e) {
+    } catch {
       return false;
     }
     return false;
@@ -97,7 +85,6 @@ class Header extends React.Component {
 
     const checkList = (list) => {
       for (const prop of list) {
-        // dropdown-style with child array
         if (prop.child && Array.isArray(prop.child)) {
           for (const c of prop.child) {
             if (this._matchPath(c.path, pathname)) {
@@ -105,18 +92,14 @@ class Header extends React.Component {
               return true;
             }
           }
-        }
-        // old template structure with views
-        else if (prop.views && Array.isArray(prop.views)) {
+        } else if (prop.views && Array.isArray(prop.views)) {
           for (const v of prop.views) {
             if (this._matchPath(v.path, pathname)) {
               name = v.name;
               return true;
             }
           }
-        }
-        // plain entry
-        else {
+        } else {
           if (this._matchPath(prop.path, pathname)) {
             name = prop.name;
             return true;
@@ -126,10 +109,8 @@ class Header extends React.Component {
       return false;
     };
 
-    // search top-level routes
     checkList(dashboardRoutes);
 
-    // fallback: try to match part of path (e.g. '/university/students' -> 'Students')
     if (!name) {
       const parts = pathname.split("/").filter(Boolean);
       if (parts.length) {
@@ -138,27 +119,18 @@ class Header extends React.Component {
       }
     }
 
-    return name || "University";
+    return name || "Dashboard";
   }
 
   openSidebar() {
     document.documentElement.classList.toggle("nav-toggle");
-    // GANTI: if (this.refs.sidebarToggle) this.refs.sidebarToggle.classList.toggle('toggled');
     if (this.sidebarToggle.current)
       this.sidebarToggle.current.classList.toggle("toggled");
     if (window.innerWidth < 993) {
       document.documentElement.classList.remove("nav-toggle-chat");
     }
   }
-  openChat() {
-    document.documentElement.classList.toggle("nav-toggle-chat");
-    if (window.innerWidth < 993) {
-      document.documentElement.classList.remove("nav-toggle");
-      // GANTI: if (this.refs.sidebarToggle) this.refs.sidebarToggle.classList.remove('toggled');
-      if (this.sidebarToggle.current)
-        this.sidebarToggle.current.classList.remove("toggled");
-    }
-  }
+
   toggle_grid() {
     document.documentElement.classList.toggle("toggle-grid");
   }
@@ -172,72 +144,29 @@ class Header extends React.Component {
   }
 
   componentDidMount() {
+    // ambil data user dari localStorage
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const user = JSON.parse(userData);
+      this.setState({
+        profilename: user.fullname || "User",
+        profileimg: user.photo
+          ? user.photo
+          : "/images/profile/profile-university.jpg",
+      });
+    }
+
     if (this.props.navtype === "mini") {
       document.documentElement.classList.add("nav-toggle");
-      // GANTI: if (this.refs.sidebarToggle) this.refs.sidebarToggle.classList.add('toggled');
       if (this.sidebarToggle.current)
         this.sidebarToggle.current.classList.add("toggled");
     } else {
       document.documentElement.classList.remove("nav-toggle");
-      // GANTI: if (this.refs.sidebarToggle) this.refs.sidebarToggle.classList.remove('toggled');
       if (this.sidebarToggle.current)
         this.sidebarToggle.current.classList.remove("toggled");
     }
+
     window.addEventListener("resize", this.updateColor.bind(this));
-
-    // admintype only changes displayed profile image & name — keep for university
-    const admintype = this.props.admintype || "university";
-    if (admintype === "general") {
-      this.setState({
-        profileimg: "/images/profile/profile-general.jpg",
-        profilename: "Nancy Spencer",
-      });
-    } else if (admintype === "hospital") {
-      this.setState({
-        profileimg: "/images/profile/profile-hospital.jpg",
-        profilename: "Dianna Austin",
-      });
-    } else if (admintype === "university") {
-      this.setState({
-        profilename: "Henry Gibson",
-        profileimg: "/images/profile/profile-university.jpg",
-      });
-    } else if (admintype === "crm") {
-      this.setState({
-        profilename: "Rick Woods",
-        profileimg: "/images/profile/profile-crm.jpg",
-      });
-    } else {
-      // default fallback
-      this.setState({
-        profilename: "Nancy Spencer",
-        profileimg: "/images/profile/profile-general.jpg",
-      });
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      window.innerWidth < 993 &&
-      prevProps.history &&
-      prevProps.history.location &&
-      prevProps.history.location.pathname !== this.props.location.pathname &&
-      document.documentElement.className.indexOf("nav-toggle") !== -1
-    ) {
-      document.documentElement.classList.toggle("nav-toggle");
-      // GANTI: if (this.refs.sidebarToggle) this.refs.sidebarToggle.classList.toggle('toggled');
-      if (this.sidebarToggle.current)
-        this.sidebarToggle.current.classList.toggle("toggled");
-    }
-    if (
-      window.innerWidth < 993 &&
-      prevProps.history &&
-      prevProps.history.location &&
-      prevProps.history.location.pathname !== this.props.location.pathname &&
-      document.documentElement.className.indexOf("nav-toggle-chat") !== -1
-    ) {
-      document.documentElement.classList.toggle("nav-toggle-chat");
-    }
   }
 
   render() {
@@ -249,7 +178,7 @@ class Header extends React.Component {
           this.props.location.pathname &&
           this.props.location.pathname.indexOf("full-screen-maps") !== -1
             ? "navbar-absolute fixed-top"
-            : "navbar-absolute fixed-top "
+            : "navbar-absolute fixed-top"
         }
       >
         <Container fluid>
@@ -265,11 +194,6 @@ class Header extends React.Component {
               </button>
             </div>
 
-
-
-
-
-
             <NavbarBrand href="/">{this.getBrand()}</NavbarBrand>
           </div>
 
@@ -278,7 +202,7 @@ class Header extends React.Component {
               <Dropdown
                 nav
                 isOpen={this.state.userddOpen}
-                toggle={(e) => this.userddToggle(e)}
+                toggle={this.userddToggle}
                 className="userdd"
               >
                 <DropdownToggle caret nav>
@@ -286,30 +210,35 @@ class Header extends React.Component {
                     src={this.state.profileimg}
                     alt="profile"
                     className="avatar-image"
-                  />{" "}
+                    style={{
+                      width: "35px",
+                      height: "35px",
+                      borderRadius: "50%",
+                      marginRight: "8px",
+                      objectFit: "cover",
+                    }}
+                  />
                   <span>{this.state.profilename}</span>
                 </DropdownToggle>
+
                 <DropdownMenu end>
-                  <DropdownItem tag="a">
-                    <i className="i-wrench"></i> Settings
-                  </DropdownItem>
                   <DropdownItem tag="a">
                     <i className="i-user"></i> Profile
                   </DropdownItem>
                   <DropdownItem tag="a">
+                    <i className="i-wrench"></i> Settings
+                  </DropdownItem>
+                  <DropdownItem tag="a">
                     <i className="i-info"></i> Help
                   </DropdownItem>
-                  <DropdownItem tag="a" className="" href="#!">
+                  <DropdownItem tag="a" href="#!" onClick={this.logout}>
                     <i className="i-lock"></i> Logout
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
-s
             </Nav>
-            <div
-              className="screensize"
-              onClick={() => this.toggle_grid()}
-            ></div>
+
+            <div className="screensize" onClick={() => this.toggle_grid()}></div>
           </Collapse>
         </Container>
       </Navbar>

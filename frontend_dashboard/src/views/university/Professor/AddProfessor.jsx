@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { Row, Col, Label, Input } from "reactstrap";
+import api from "../../../services/api";
 
 export default function AddProfessor() {
   const [form, setForm] = useState({
@@ -41,12 +41,13 @@ export default function AddProfessor() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/instruktur", data, {
+      const res = await api.post("/api/instruktur/", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       setMessage(res.data.message || "Berhasil menambahkan instruktur!");
+      navigate("/admin/university/professors");
       setForm({
         nama_instruktur: "",
         deskripsi_instruktur: "",

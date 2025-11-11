@@ -3,7 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 require('dotenv').config()
-
+const courseRoutes = require('./src/routes/courseRoute');
 const instrukturRoutes = require('./src/routes/instrukturRoute')
 const authRoutes = require('./src/routes/authRoute')
 
@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
-
+app.use('/api/course', courseRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/instruktur', instrukturRoutes);
 

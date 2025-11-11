@@ -9,7 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
-var IMGDIR = import.meta.env.VITE_IMGDIR; // ✅ Solusi untuk Vite
+// var IMGDIR = import.meta.env.VITE_IMGDIR; // ✅ Solusi untuk Vite
 
 class EditCourse extends React.Component{
     constructor (props) {

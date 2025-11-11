@@ -6,7 +6,7 @@ const JWT_SECRET = "supersecret123";
 
 // 🟢 REGISTER
 const register = async (req, res) => {
-  const { username, fullname, email, password } = req.body;
+  const { username, fullname, email, password, role } = req.body;
 
   try {
     const userExist = await UserModel.findByEmail(email);
@@ -14,9 +14,19 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Email already used" });
 
     const hashed = await bcrypt.hash(password, 10);
-    await UserModel.create({ username, fullname, email, password: hashed });
 
-    res.json({ message: "User registered successfully" });
+    // default role = student kalau tidak dikirim
+    const newUser = {
+      username,
+      fullname,
+      email,
+      password: hashed,
+      role: role || "student",
+    };
+
+    await UserModel.create(newUser);
+
+    res.json({ message: "User registered successfully", user: newUser });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -33,11 +43,24 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid password" });
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "1h",
+    // Masukkan role ke JWT payload
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({
+      message: "Login success",
+      token,
+      user: {
+        id: user.id,
+        fullname: user.fullname,
+        email: user.email,
+        role: user.role
+      }
     });
 
-    res.json({ message: "Login success", token });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -46,7 +69,7 @@ const login = async (req, res) => {
 // 🟡 EDIT USER
 const edit = async (req, res) => {
   const { id } = req.params;
-  const { username, fullname, email, password } = req.body;
+  const { username, fullname, email, password, role } = req.body;
 
   try {
     const user = await UserModel.findById(id);
@@ -57,7 +80,13 @@ const edit = async (req, res) => {
       hashed = await bcrypt.hash(password, 10);
     }
 
-    await UserModel.update(id, { username, fullname, email, password: hashed });
+    await UserModel.update(id, {
+      username,
+      fullname,
+      email,
+      password: hashed,
+      role: role || user.role,
+    });
 
     res.json({ message: "User updated successfully" });
   } catch (err) {
@@ -68,9 +97,10 @@ const edit = async (req, res) => {
 // 🔴 LOGOUT
 const logout = async (req, res) => {
   try {
-    // Jika pakai token JWT, logout cukup dengan "menghapus token" di sisi client.
-    // Tapi kita bisa kasih respon untuk konfirmasi logout.
-    res.json({ message: "Logout success. Please clear your token on client side." });
+    res.json({
+      message:
+        "Logout success. Please clear your token and role on client side.",
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

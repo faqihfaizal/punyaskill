@@ -47,35 +47,51 @@ exports.create = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    try {
-        const { id_instruktur } = req.params;
-        const before = await instruktur.detail(id_instruktur);
-        if (!before) return res.status(404).json({ message: 'Data tidak ditemukan' });
+  try {
+    const { id_instruktur } = req.params;
+    const { nama_instruktur, deskripsi_instruktur, bidang_instruktur } = req.body;
 
-        const body = req.body;
-        const fotoAbs = req.file?.path || null;
-        const newPublic = asPublicPath(fotoAbs);
-
-        const payload = {
-            nama_instruktur: body.nama_instruktur,
-            deskripsi_instruktur: body.deskripsi_instruktur || null,
-            bidang_instruktur: body.bidang_instruktur || null,
-            foto_instruktur: newPublic || ''
-        };
-
-        const info = await instruktur.update(id_instruktur, payload);
-
-        // Jika ada foto baru, hapus foto lama dari penyimpanan
-        if (newPublic && before.foto) {
-            const oldAbs = path.join(process.cwd(), before.foto.replace(/\\/g, '/'));
-            deleteFileIfExists(oldAbs);
-        }
-
-        res.json({ message: 'Berhasil memperbarui', ...info });
-    } catch (e) {
-        res.status(500).json({ message: e.message });
+    // Ambil data lama dari model
+    const oldData = await instruktur.detail(id_instruktur);
+    if (!oldData) {
+      return res.status(404).json({ message: "Instruktur tidak ditemukan" });
     }
+
+    // Default: pakai foto lama
+    let fotoInstruktur = oldData.foto_instruktur;
+
+    // Kalau ada file baru, hapus lama dan update
+    if (req.file) {
+      // hapus file lama (kalau ada)
+      if (oldData.foto_instruktur) {
+        const oldPath = path.join(process.cwd(), oldData.foto_instruktur.replace(/^\//, ""));
+        deleteFileIfExists(oldPath);
+      }
+      fotoInstruktur = asPublicPath(req.file.path);
+    }
+
+    // Buat payload baru
+    const payload = {
+      nama_instruktur,
+      deskripsi_instruktur,
+      bidang_instruktur,
+      foto_instruktur: fotoInstruktur
+    };
+
+    // Update ke DB
+    const result = await instruktur.update(id_instruktur, payload);
+
+    res.json({
+      message: "Instruktur berhasil diperbarui",
+      data: result
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Gagal memperbarui instruktur" });
+  }
 };
+
+
 
 exports.remove = async (req, res) => {
     try {

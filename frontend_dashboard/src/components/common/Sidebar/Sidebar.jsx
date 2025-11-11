@@ -78,53 +78,11 @@ class Sidebar extends React.Component {
                 profileimg: '/images/profile/profile-general.jpg',
                 profilename: 'Nancy Spencer'
             });
-        } else if (this.props.admintype === 'hospital') {
-            this.setState({
-                profileposition: 'Surgeon',
-                profileimg: '/images/profile/profile-hospital.jpg',
-                profilename: 'Dianna Austin'
-            });
         } else if (this.props.admintype === 'university') {
             this.setState({
                 profileposition: 'Professor',
                 profilename: 'Henry Gibson',
                 profileimg: '/images/profile/profile-university.jpg'
-            });
-        } else if (this.props.admintype === 'crm') {
-            this.setState({
-                profileposition: 'Customer',
-                profilename: 'Rick  Woods',
-                profileimg: '/images/profile/profile-crm.jpg'
-            });
-        } else if (this.props.admintype === 'music') {
-            this.setState({
-                profileposition: 'Singer',
-                profilename: 'Kerry Flores',
-                profileimg: '/images/profile/profile-music.jpg'
-            });
-        } else if (this.props.admintype === 'blog') {
-            this.setState({
-                profileposition: 'Editor',
-                profilename: 'Alice Gross',
-                profileimg: '/images/profile/profile-blog.jpg'
-            });
-        } else if (this.props.admintype === 'ecommerce') {
-            this.setState({
-                profileposition: 'Vendor',
-                profilename: 'Jake  Daniel',
-                profileimg: '/images/profile/profile-ecommerce.jpg'
-            });
-        } else if (this.props.admintype === 'freelance') {
-            this.setState({
-                profileposition: 'Designer',
-                profilename: 'Eric Nelson',
-                profileimg: '/images/profile/profile-freelance.jpg'
-            });
-        } else if (this.props.admintype === 'social') {
-            this.setState({
-                profileposition: 'Artist',
-                profilename: 'Penny Taylor',
-                profileimg: '/images/profile/profile-social.jpg'
             });
         } else {
             this.setState({
