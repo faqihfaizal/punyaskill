@@ -10,16 +10,17 @@ import {
   DropdownItem,
   Container,
 } from "reactstrap";
+import dashboardRoutes from "routes/university.jsx";
 
-import dashboardRoutes from "routes/university.jsx"; // route lama tetap dipakai
-
-const IMGDIR = import.meta.env.VITE_IMGDIR || "";
-
+/**
+ * Header untuk Dashboard Admin
+ * Mengambil data user dari localStorage (sinkron dengan LMS)
+ * dan bisa logout ke server LMS (localhost:5173)
+ */
 class Header extends React.Component {
   constructor(props) {
     super(props);
     this.sidebarToggle = React.createRef();
-    this.chatToggle = React.createRef();
 
     this.state = {
       isOpen: false,
@@ -32,9 +33,10 @@ class Header extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.userddToggle = this.userddToggle.bind(this);
     this.logout = this.logout.bind(this);
+    this.loadUser = this.loadUser.bind(this);
   }
 
-  // toggle navbar
+  // toggle navbar open/close
   toggle() {
     this.setState((prev) => ({
       isOpen: !prev.isOpen,
@@ -46,30 +48,50 @@ class Header extends React.Component {
     this.setState((prev) => ({ userddOpen: !prev.userddOpen }));
   }
 
-  // fungsi logout
-  logout() {
-    localStorage.removeItem("user");
-    window.location.href = "http://localhost:5173/login"; // arahkan ke halaman login
+  // ambil data user dari localStorage
+  loadUser() {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.setState({
+          profilename: user.fullname || user.username || "User",
+          profileimg: user.photo
+            ? user.photo
+            : "/images/profile/profile-university.jpg",
+        });
+      } catch (err) {
+        console.warn("Invalid user data:", err);
+      }
+    } else {
+      this.setState({
+        profilename: "User",
+        profileimg: "/images/profile/profile-university.jpg",
+      });
+    }
   }
 
-  // match route name untuk brand title
+  // logout: hapus session dan arahkan balik ke LMS
+  logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    // dispatch event agar tab lain ikut tahu
+    window.dispatchEvent(new Event("storage"));
+    // redirect ke LMS login page
+    window.location.href = "http://localhost:5173/login";
+  }
+
+  // cari nama halaman aktif berdasarkan route
   _matchPath(routePath = "", pathname = "") {
     if (!routePath) return false;
     try {
       const rp = String(routePath);
       const pn = String(pathname);
       if (pn === rp) return true;
-
       const parts = rp.split("/").filter(Boolean);
       if (parts.length === 0) return false;
-
-      const last = parts.slice(-2).join("/");
-      if (last && pn.endsWith("/" + last)) return true;
-
-      const last1 = parts.slice(-1)[0];
-      if (last1 && (pn.endsWith("/" + last1) || pn === "/" + last1)) return true;
-
-      if (rp && pn.indexOf(last) !== -1) return true;
+      const last = parts.slice(-1)[0];
+      if (pn.endsWith("/" + last) || pn === "/" + last) return true;
     } catch {
       return false;
     }
@@ -83,79 +105,57 @@ class Header extends React.Component {
       "";
     let name = null;
 
-    const checkList = (list) => {
-      for (const prop of list) {
-        if (prop.child && Array.isArray(prop.child)) {
-          for (const c of prop.child) {
-            if (this._matchPath(c.path, pathname)) {
-              name = c.name;
-              return true;
-            }
-          }
-        } else if (prop.views && Array.isArray(prop.views)) {
-          for (const v of prop.views) {
-            if (this._matchPath(v.path, pathname)) {
-              name = v.name;
-              return true;
-            }
-          }
-        } else {
-          if (this._matchPath(prop.path, pathname)) {
-            name = prop.name;
-            return true;
+    for (const route of dashboardRoutes) {
+      if (this._matchPath(route.path, pathname)) {
+        name = route.name;
+        break;
+      }
+      if (route.child) {
+        for (const c of route.child) {
+          if (this._matchPath(c.path, pathname)) {
+            name = c.name;
+            break;
           }
         }
       }
-      return false;
-    };
-
-    checkList(dashboardRoutes);
-
-    if (!name) {
-      const parts = pathname.split("/").filter(Boolean);
-      if (parts.length) {
-        const last = parts.slice(-1)[0];
-        name = last ? last.charAt(0).toUpperCase() + last.slice(1) : null;
+      if (route.views) {
+        for (const v of route.views) {
+          if (this._matchPath(v.path, pathname)) {
+            name = v.name;
+            break;
+          }
+        }
       }
     }
 
-    return name || "Dashboard";
+    if (!name) {
+      const parts = pathname.split("/").filter(Boolean);
+      name = parts.length
+        ? parts.slice(-1)[0].charAt(0).toUpperCase() + parts.slice(-1)[0].slice(1)
+        : "Dashboard";
+    }
+
+    return name;
   }
 
   openSidebar() {
     document.documentElement.classList.toggle("nav-toggle");
     if (this.sidebarToggle.current)
       this.sidebarToggle.current.classList.toggle("toggled");
-    if (window.innerWidth < 993) {
-      document.documentElement.classList.remove("nav-toggle-chat");
-    }
   }
 
   toggle_grid() {
     document.documentElement.classList.toggle("toggle-grid");
   }
 
-  updateColor() {
-    if (window.innerWidth < 993 && this.state.isOpen) {
-      this.setState({ color: "primary" });
-    } else {
-      this.setState({ color: "primary" });
-    }
-  }
-
   componentDidMount() {
-    // ambil data user dari localStorage
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const user = JSON.parse(userData);
-      this.setState({
-        profilename: user.fullname || "User",
-        profileimg: user.photo
-          ? user.photo
-          : "/images/profile/profile-university.jpg",
-      });
-    }
+    // load user saat awal
+    this.loadUser();
 
+    // pantau perubahan user di localStorage
+    window.addEventListener("storage", this.loadUser);
+
+    // handle layout mini nav
     if (this.props.navtype === "mini") {
       document.documentElement.classList.add("nav-toggle");
       if (this.sidebarToggle.current)
@@ -166,20 +166,19 @@ class Header extends React.Component {
         this.sidebarToggle.current.classList.remove("toggled");
     }
 
-    window.addEventListener("resize", this.updateColor.bind(this));
+    window.addEventListener("resize", this.updateColor?.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("storage", this.loadUser);
   }
 
   render() {
     return (
       <Navbar
         expand="lg"
-        className={
-          this.props.location &&
-          this.props.location.pathname &&
-          this.props.location.pathname.indexOf("full-screen-maps") !== -1
-            ? "navbar-absolute fixed-top"
-            : "navbar-absolute fixed-top"
-        }
+        className="navbar-absolute fixed-top"
+        color={this.state.color}
       >
         <Container fluid>
           <div className="navbar-wrapper">
@@ -193,7 +192,6 @@ class Header extends React.Component {
                 <i className="i-menu"></i>
               </button>
             </div>
-
             <NavbarBrand href="/">{this.getBrand()}</NavbarBrand>
           </div>
 
@@ -238,7 +236,10 @@ class Header extends React.Component {
               </Dropdown>
             </Nav>
 
-            <div className="screensize" onClick={() => this.toggle_grid()}></div>
+            <div
+              className="screensize"
+              onClick={() => this.toggle_grid()}
+            ></div>
           </Collapse>
         </Container>
       </Navbar>

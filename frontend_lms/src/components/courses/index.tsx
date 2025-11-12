@@ -13,7 +13,7 @@ export default function Courses() {
     <>
       <Preloader />
       <HeaderOne />
-      <Breadcrumb title="Course Style 1" subtitle="Course Style 1" />
+      <Breadcrumb title="Course List" subtitle="Course List" />
       <CoursesArea />
       <FooterOne />
       <ScrollToTop />

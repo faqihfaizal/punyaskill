@@ -2,7 +2,7 @@ const pool = require('../config/db');
 
 // Ambil semua course
 exports.getAllCourses = async () => {
-    const [rows] = await pool.query('SELECT * FROM course');
+    const [rows] = await pool.query("SELECT*, instruktur.nama_instruktur AS nama_instruktur, instruktur.foto_instruktur AS foto_instruktur FROM course  JOIN instruktur ON course.id_instruktur = instruktur.id_instruktur");
     return rows;
 };
 

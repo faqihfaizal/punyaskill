@@ -48,10 +48,10 @@ export default function InstrukturList() {
                                     }
                                     alt={ins.nama_instruktur}
                                     style={{
-                                        width: '350px',   // Atur lebar seragam
-                                      height: '350px',  // Atur tinggi seragam (agar rasio 1:1)
-                                        objectFit: 'cover' // Ini properti ajaibnya
-                                    }}
+                                        width: '350px',   // Atur lebar seragam
+                                        height: '350px',  // Atur tinggi seragam (agar rasio 1:1)
+                                        objectFit: 'cover' // Ini properti ajaibnya
+                                    }}
                                 />
                             </div>
                             <div className="team-info text-center mt-3">

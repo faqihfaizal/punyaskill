@@ -118,7 +118,7 @@ export default function HeaderOne() {
                   <button onClick={handleLogout} className="white-btn bt">Logout</button>
                 </>
               ) : (
-                <Link to="/register" className="white-btn bt">Login / Register</Link>
+                <Link to="/login" className="white-btn bt">Login / Register</Link>
               )}
             </div>
 
