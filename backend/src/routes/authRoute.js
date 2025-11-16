@@ -7,5 +7,8 @@ router.post("/register", ctrl.register);
 router.post("/login", ctrl.login);
 router.put("/edit/:id", ctrl.edit); // edit user berdasarkan id
 router.post("/logout", ctrl.logout); // logout user
+router.get("/", ctrl.getList);
+router.delete("/:id", ctrl.remove);
+
 
 module.exports = router;

@@ -56,9 +56,7 @@ export default function InstrukturList() {
                             </div>
                             <div className="team-info text-center mt-3">
                                 <h3 className="text-lg font-semibold">
-                                    <NavLink to={`${BASEDIR}/university/professor-profile/${ins.id_instruktur}`}>
-                                        {ins.nama_instruktur}
-                                    </NavLink>
+                                    {ins.nama_instruktur}
                                 </h3>
                                 <span className="text-muted">{ins.bidang_instruktur}</span>
                                 <p className="mt-2 text-sm">{ins.deskripsi_instruktur}</p>

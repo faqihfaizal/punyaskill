@@ -15,7 +15,7 @@ export default function Courseslist() {
                 // 1. Logika fetch disamakan dengan Professorlist
                 const response = await api.get("/api/course");
                 // 2. State diset dengan response.data (bukan response.data.data)
-                setCourses(response.data.data || []);
+                setCourses(response.data || []);
             } catch (error) {
                 console.error("Error fetching courses:", error);
                 setError("Gagal memuat data course.");
@@ -67,16 +67,16 @@ export default function Courseslist() {
                                             to={`${BASEDIR}/university/course-view/${course.slug}`}
                                             className="text-decoration-none text-dark"
                                         >
-                                            {course.title}
+                                            {course.judul_course}
                                         </NavLink>
                                     </h5>
                                     <small className="text-muted">
                                         {course.skill_level || "Beginner"} /{" "}
-                                        {course.duration || "-"}
+                                        {course.durasi_course || "-"}
                                     </small>
                                     <p className="mt-2 mb-0 small text-secondary">
-                                        {course.description
-                                            ? `${course.description.slice(0, 80)}...`
+                                        {course.deskripsi_course
+                                            ? `${course.deskripsi_course.slice(0, 300)}...`
                                             : "Tidak ada deskripsi"}
                                     </p>
                                 </div>

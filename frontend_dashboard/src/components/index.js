@@ -5,17 +5,17 @@ import Sidebar from './common/Sidebar/Sidebar';
 import ChatSidebar from './common/ChatSidebar/ChatSidebar';
 import Stylebar from './common/Stylebar/Stylebar';
 import StyleSettings from './common/StyleSettings/StyleSettings';
-import Favcontacts from './common/Chatbar/Favcontacts';
-import Allcontacts from './common/Chatbar/Allcontacts';
-import Chatgroups from './common/Chatbar/Chatgroups';
-import Notifications from './common/Notifications/Notifications';
-import Messages from './common/Messages/Messages';
-import Mailbox from './common/Mailbox/Mailbox';
+// import Favcontacts from './common/Chatbar/Favcontacts';
+// import Allcontacts from './common/Chatbar/Allcontacts.jsx.bak';
+// import Chatgroups from './common/Chatbar/Chatgroups';
+// import Notifications from './common/Notifications/Notifications';
+// import Messages from './common/Messages/Messages.jsx.bak';
+// import Mailbox from './common/Mailbox/Mailbox';
 
 /*--------------- University Admin Components ------------------*/
 import Professorslist from './university/Professorslist/Professorslist';
 import Studentslist from './university/Studentslist/Studentslist';
-import UniStaffslist from './university/UniStaffslist/UniStaffslist';
+// import UniStaffslist from './university/UniStaffslist/UniStaffslist.jsx.bak';
 import Courseslist from './university/Courseslist/Courseslist';
 
 /*--------------- Export only what exists/needed ------------------*/
@@ -27,17 +27,17 @@ export {
   ChatSidebar,
   Stylebar,
   StyleSettings,
-  Favcontacts,
-  Allcontacts,
-  Chatgroups,
-  Notifications,
-  Messages,
-  Mailbox,
+  // Favcontacts,
+  // Allcontacts,
+  // Chatgroups,
+  // Notifications,
+  // Messages,
+  // Mailbox,
 
   // University
   Professorslist,
   Studentslist,
-  UniStaffslist,
+  // UniStaffslist,
   Courseslist
 };
 
@@ -48,14 +48,14 @@ export default {
   ChatSidebar,
   Stylebar,
   StyleSettings,
-  Favcontacts,
-  Allcontacts,
-  Chatgroups,
-  Notifications,
-  Messages,
-  Mailbox,
+  // Favcontacts,
+  // Allcontacts,
+  // Chatgroups,
+  // Notifications,
+  // Messages,
+  // Mailbox,
   Professorslist,
   Studentslist,
-  UniStaffslist,
+  // UniStaffslist,
   Courseslist
 };

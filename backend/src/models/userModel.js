@@ -11,13 +11,14 @@ const UserModel = {
   },
 
   // Cari user berdasarkan ID
-  async findById(id) {
+  async findById(id_user) {
     const [rows] = await db.query(
-      "SELECT id, username, fullname, email FROM users WHERE id = ?",
-      [id]
+      "SELECT * FROM users WHERE id_user = ?",
+      [id_user]
     );
     return rows[0];
   },
+
 
   // Tambah user baru
   async create({ username, fullname, email, password }) {
@@ -45,6 +46,22 @@ const UserModel = {
     const [result] = await db.query(sql, params);
     return result;
   },
+  async list() {
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE role = 'student' ORDER BY id_user DESC"
+    );
+    return rows;
+  },
+
+
+  async remove(id_user) {
+    const [result] = await db.query("DELETE FROM users WHERE id_user = ?", [
+      id_user,
+    ]);
+    return result;
+  }
+
 };
+
 
 module.exports = { UserModel };

@@ -145,7 +145,7 @@ class Sidebar extends React.Component {
 
 
         return (
-            <div className="sidebar menubar" data-color="black">
+            <div className="sidebar menubar " >
 
                 <div className="logo">
                     <a href="/" className="logo-mini">

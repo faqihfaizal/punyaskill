@@ -3,9 +3,9 @@ import { Form, FormGroup, Input } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 
-import { Favcontacts, Allcontacts, Chatgroups } from "components";
+// import { Favcontacts, Allcontacts, Chatgroups } from "components";
 
-import { favcontacts, allcontacts, chatgroups } from "variables/topbar.jsx";
+// import { favcontacts, allcontacts, chatgroups } from "variables/topbar.jsx";
 
 var ps;
 

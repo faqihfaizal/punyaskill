@@ -78,7 +78,7 @@ class Header extends React.Component {
     // dispatch event agar tab lain ikut tahu
     window.dispatchEvent(new Event("storage"));
     // redirect ke LMS login page
-    window.location.href = "http://localhost:5173/login";
+    window.location.href = "http://localhost:3000/login";
   }
 
   // cari nama halaman aktif berdasarkan route
@@ -178,7 +178,6 @@ class Header extends React.Component {
       <Navbar
         expand="lg"
         className="navbar-absolute fixed-top"
-        color={this.state.color}
       >
         <Container fluid>
           <div className="navbar-wrapper">

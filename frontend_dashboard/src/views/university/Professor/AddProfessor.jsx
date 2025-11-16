@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Row, Col, Label, Input } from "reactstrap";
 import api from "../../../services/api";
+import { useNavigate } from "react-router-dom";
+
+
+
 
 export default function AddProfessor() {
   const [form, setForm] = useState({
@@ -55,9 +59,12 @@ export default function AddProfessor() {
         foto_instruktur: null,
       });
     } catch (err) {
+      console.log("FULL ERROR:", err);
+      console.log("RESPONSE:", err.response);
       setMessage(err.response?.data?.message || "Terjadi kesalahan.");
     }
   };
+  const navigate = useNavigate(); // <<< TAMBAHKAN
 
   return (
     <div className="content">

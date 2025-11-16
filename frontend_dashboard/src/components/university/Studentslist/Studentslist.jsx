@@ -1,46 +1,88 @@
-import React from 'react';
-//import { DropdownMenu, DropdownItem, } from 'reactstrap';
-// used for making the prop types of this component
-import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "reactstrap";
+import api from "../../../services/api";
 
-const BASEDIR = import.meta.env.VITE_REACT_APP_BASEDIR;
+export default function StudentList() {
+    const [students, setStudents] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-
-
-class Studentslist extends React.Component{
-    render(){
-        var studentsList = [];
-        for (var i = 0; i < this.props.students.length; i++) {
-            studentsList.push(
-
-
-                                            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3" key={i}>
-                                                <div className="team-member">
-                                                    <div className="team-img">
-                                                        <img className="img-fluid" src={this.props.students[i].avatar} alt="" />
-                                                    </div>
-                                                    <div className="team-info">
-                                                        <h3><NavLink to={BASEDIR+"/university/student-profile"}>{ this.props.students[i].name }</NavLink></h3>
-                                                        <span>{ this.props.students[i].position }</span> / <span>{ this.props.students[i].age } years old</span>
-                                                        <ul className="social-icons list-inline list-unstyled">
-                                                                <li className="list-inline-item"><a href="#!"><i className="i-envelope icon-primary icon-xs"></i></a></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-            );
+    const fetchStudents = async () => {
+        try {
+            const res = await api.get("/api/auth/");
+            setStudents(res.data);
+        } catch (err) {
+            console.error("Gagal memuat data student:", err);
+        } finally {
+            setLoading(false);
         }
-        return (
-                                <div className="row">
-                                       { studentsList }
-                                </div>
-        );
-    }
-}
+    };
 
-Studentslist.propTypes = {
-    students: PropTypes.arrayOf(PropTypes.object)
-}
+    useEffect(() => {
+        fetchStudents();
+    }, []);
 
-export default Studentslist;
+    // ✅ handleDelete sekarang menerima student yang ingin dihapus
+    const handleDelete = async (student) => {
+        if (window.confirm(`Yakin ingin menghapus student: ${student.fullname}?`)) {
+            try {
+                await api.delete(`/api/auth/${student.id_user}`);
+                alert("Student berhasil dihapus.");
+                fetchStudents(); // refresh list
+            } catch (err) {
+                console.error("Gagal menghapus student:", err);
+                alert("Gagal menghapus student.");
+            }
+        }
+    };
+
+    if (loading) return <p>Loading...</p>;
+
+    return (
+        <div className="row">
+            {students.length > 0 ? (
+                students.map((st) => (
+                    <div className="col-md-6 col-lg-4" key={st.id_user}>
+                        <div className="team-member">
+
+                            <div className="team-img d-flex justify-content-center">
+                                <img
+                                    className="rounded"
+                                    src={
+                                        st.foto_user
+                                            ? `http://localhost:5000${st.foto_user}`
+                                            : "https://ui-avatars.com/api/?name=Student&size=300"
+                                    }
+                                    alt={st.fullname}
+                                    style={{
+                                        width: "350px",
+                                        height: "350px",
+                                        objectFit: "cover"
+                                    }}
+                                />
+                            </div>
+
+                            <div className="team-info text-center mt-3">
+                                <h3 className="text-lg font-semibold">{st.fullname}</h3>
+                                <span className="text-muted">{st.email}</span>
+                            </div>
+
+                            <div className="my-3 d-flex justify-content-center">
+                                <Button
+                                    type="button"
+                                    color="danger"
+                                    onClick={() => handleDelete(st)}   // ✅ kirim data student
+                                >
+                                    Hapus Siswa
+                                </Button>
+                            </div>
+
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <p>Tidak ada student.</p>
+            )}
+        </div>
+    );
+}

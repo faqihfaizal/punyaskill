@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UserModel } = require("../models/userModel.js");
+const { get } = require("../routes/courseRoute.js");
 
 const JWT_SECRET = "supersecret123";
 
@@ -94,6 +95,15 @@ const edit = async (req, res) => {
   }
 };
 
+const getList = async (req, res) => {
+    try {
+        const data = await UserModel.list();
+        res.json(data);
+    } catch (e) {
+        res.status(500).json({ message: e.message });
+    }
+};
+
 // 🔴 LOGOUT
 const logout = async (req, res) => {
   try {
@@ -106,4 +116,24 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, edit, logout };
+// 🔴 DELETE USER
+const remove = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await UserModel.remove(id);
+
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+module.exports = { register, login, edit, logout, getList, remove };

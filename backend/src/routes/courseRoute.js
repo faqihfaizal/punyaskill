@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const courseController = require('../controllers/courseController');
-const upload = require('../middleware/upload'); // optional
 
-// CRUD routes
-router.get('/', courseController.getAllCourses);
-router.get('/:slug', courseController.getCourseBySlug);
-router.post('/', upload.single('thumbnail'), courseController.createCourse);
-router.put('/:slug', upload.single('thumbnail'), courseController.updateCourse);
-router.delete('/:slug', courseController.deleteCourse);
+const upload = require("../middleware/upload");
+const courseController = require("../controllers/courseController");
+
+router.get("/", courseController.getList);
+router.get("/:slug", courseController.getDetail);
+router.post("/", upload.single("thumbnail"), courseController.create);
+router.put("/:slug", upload.single("thumbnail"), courseController.update);
+router.delete("/:slug", courseController.remove);
 
 module.exports = router;
