@@ -17,6 +17,7 @@ import Professorslist from './university/Professorslist/Professorslist';
 import Studentslist from './university/Studentslist/Studentslist';
 // import UniStaffslist from './university/UniStaffslist/UniStaffslist.jsx.bak';
 import Courseslist from './university/Courseslist/Courseslist';
+import CourseProfile from '../views/university/Course/CourseView';
 
 /*--------------- Export only what exists/needed ------------------*/
 export {

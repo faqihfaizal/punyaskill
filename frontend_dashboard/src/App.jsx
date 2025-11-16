@@ -47,9 +47,9 @@ export default function App() {
           dengan file university.jsx
         */}
                                 <Route path='university/students' element={<Student />} />
-                                <Route path='university/add-student' element={<AddStudent />} />
+                                {/* <Route path='university/add-student' element={<AddStudent />} /> */}
                                 {/* Asumsi 'edit-student' dan 'student-profile' menggunakan :id */}
-                                <Route path='university/edit-student/:id' element={<EditStudent />} />
+                                {/* <Route path='university/edit-student/:id' element={<EditStudent />} /> */}
                                 <Route path='university/student-profile/:id' element={<StudentProfile />} />
 
                                 {/* --- Rute Professor (Lengkap) --- */}
@@ -72,7 +72,7 @@ export default function App() {
           Jadi, kita harus pakai :slug di sini agar dinamis.
         */}
                                 <Route path='university/edit-course/:slug' element={<EditCourse />} />
-                                <Route path='university/course-view/:slug' element={<CourseView />} />
+                                <Route path='admin/university/course-view/:slug' element={<CourseView />} />
                                 {/* ======================================================== */}
                                 {/* !! AKHIR TAMBAHAN !!                                  */}
                                 {/* ======================================================== */}

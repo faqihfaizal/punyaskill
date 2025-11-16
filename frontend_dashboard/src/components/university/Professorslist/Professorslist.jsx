@@ -56,7 +56,9 @@ export default function InstrukturList() {
                             </div>
                             <div className="team-info text-center mt-3">
                                 <h3 className="text-lg font-semibold">
-                                    {ins.nama_instruktur}
+                                    <NavLink to={`${BASEDIR}/university/professor-profile/${ins.id_instruktur}`}>
+                                        {ins.nama_instruktur}
+                                    </NavLink>
                                 </h3>
                                 <span className="text-muted">{ins.bidang_instruktur}</span>
                                 <p className="mt-2 text-sm">{ins.deskripsi_instruktur}</p>
@@ -72,7 +74,7 @@ export default function InstrukturList() {
                    * Sesuaikan path ini agar sama dengan yang ada di App.jsx
                    */}
                                     <Link
-                                        to={`/admin/university/edit-professor/${ins.id_instruktur}`}
+                                        to={`${BASEDIR}/university/edit-professor/${ins.id_instruktur}`}
                                         className="btn btn-sm btn-primary" // Ganti class styling Anda
                                     >
                                         Edit

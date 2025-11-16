@@ -33,7 +33,7 @@ var dashRoutes = [
 
         { path: BASEDIR+"/university/edit-professor/:id_instruktur", component: EditProfessor, type: "child"},
 
-        { path: BASEDIR+"/university/professor-profile", component: ProfessorProfile, type: "child"},
+        { path: BASEDIR+"/university/professor-profile/:id_instruktur", component: ProfessorProfile, type: "child"},
     {
         path: "#", name: "Students", icon: "people", type: "dropdown", parentid: "students",
 
@@ -50,7 +50,7 @@ var dashRoutes = [
 
         { path: BASEDIR+"/university/edit-student", component: EditStudent, type: "child"},
 
-        { path: BASEDIR+"/university/student-profile", component: StudentProfile, type: "child"},
+        { path: BASEDIR+"/university/student-profile/:id_siswa", component: StudentProfile, type: "child"},
 
 
 
@@ -68,8 +68,6 @@ var dashRoutes = [
 
                 { path: BASEDIR+"/university/edit-course", name: "Edit Course"},
 
-                { path: BASEDIR+"/university/course-view/:slug", name: "View Course"},
-
             ]
 
     },
@@ -80,7 +78,7 @@ var dashRoutes = [
 
         { path: BASEDIR+"/university/edit-course", component: EditCourse, type: "child"},
 
-        { path: BASEDIR+"/university/course-view", component: CourseView, type: "child"},
+        { path: BASEDIR+"/university/course-view/:slug", component: CourseView, type: "child"},
 
 
 

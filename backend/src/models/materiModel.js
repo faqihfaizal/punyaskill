@@ -12,7 +12,6 @@ const getAllByCourse = async (id_course) => {
             created_at
         FROM materi 
         WHERE id_course = ?
-        ORDER BY created_at DESC
     `;
     const [rows] = await pool.execute(query, [id_course]);
     return rows;

@@ -1,135 +1,100 @@
-import React from 'react';
-import {
+import { useEffect, useState } from "react";
+import { Row, Col } from "reactstrap";
+import { useParams } from "react-router-dom";
+import api from "../../../services/api"; // axios baseURL kamu
 
-    Row, Col,
-} from 'reactstrap';
+export default function ProfessorProfile() {
+    const { id_instruktur } = useParams(); // pastikan route: /instruktur/:id
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-import {
-    
-} from 'components';
+    useEffect(() => {
+        const fetchDetail = async () => {
+            try {
+                const res = await api.get(`/api/instruktur/${id_instruktur}`);
+                setData(res.data);
+            } catch (err) {
+                console.error("Gagal mengambil data instruktur:", err);
+                setMessage("Gagal memuat data instruktur.");
+            } finally {
+                setLoading(false);
+            }
+        };
 
+        fetchDetail();
+    }, [id_instruktur]);
 
+    if (loading) return <p className="content">Loading...</p>;
+    if (!data) return <p className="content">Data tidak ditemukan</p>;
 
-class ProfessorProfile extends React.Component{
-   
-    
-    render(){
-
-        return (
-            <div>
-                <div className="content">
-                    <Row>
-                        <Col xs={12} md={12}>
-
+    return (
+        <div className="content">
+            <Row>
+                <Col xs={12} md={12}>
                     <div className="page-title">
                         <div className="float-left">
-                            <h1 className="title">Professor Profile</h1>
+                            <h1 className="title">Instruktur Profile</h1>
                         </div>
                     </div>
-
-
-                            
-
-
 
                     <div className="col-xl-12">
                         <section className="box profile-page">
                             <div className="content-body">
-                                    <div className="col-12">
+
+                                <div className="col-12">
                                     <div className="row uprofile">
+
                                         <div className="uprofile-image col-xl-2 col-lg-3 col-md-3 col-sm-4 col-12">
-                                            <img alt="" src={"/images/university/professors/professor-1.jpg"} className="img-fluid" />
+                                            <img
+                                                alt="foto instruktur"
+                                                src={
+                                                    data.foto_instruktur
+                                                        ? `http://localhost:5000${data.foto_instruktur}`
+                                                        : "https://via.placeholder.com/300x200?text=No+Image"
+                                                }
+                                                className="img-fluid"
+                                            />
                                         </div>
+
                                         <div className="uprofile-name col-xl-10 col-lg-9 col-md-9 col-sm-8 col-12">
                                             <h3 className="uprofile-owner">
-                                                <a href="#!">Prof. Stephnie Clarke</a>
+                                                <a href="#!">{data.nama_instruktur}</a>
                                             </h3>
+
                                             <button className="btn btn-primary btn-sm profile-btn">Send message</button>
                                             <button className="btn btn-primary btn-sm profile-btn">Add as friend</button>
-                                            <div className="clearfix"></div>
-                                            <p className="uprofile-title">Sr. Professor</p>
-                                            <div className="clearfix"></div>
-                                            <p>Humans can evaluate these visual elements in several situations to find a sense of balance. Humans can evaluate these visual elements in several situations to find a sense of balance.</p>
-                                            <p className="uprofile-list">
-                                                <span><i className='i-home'></i> New York, USA</span> 
-                                                <span><i className='i-user'></i> 340 Contacts</span>
-                                                <span><i className='i-briefcase'></i> Tech Lead, YIAM</span>
 
-                                            </p>
+                                            <div className="clearfix"></div>
+
+                                            <p className="uprofile-title">{data.bidang_instruktur}</p>
+
+                                            <div className="clearfix"></div>
+
+                                            <p>{data.deskripsi_instruktur}</p>
                                         </div>
                                     </div>
-                                    </div>
+                                </div>
 
-                                    <div className="col-12">
+                                <div className="col-12">
+                                    <hr />
+                                    <h4>Biography:</h4>
+                                    <p>{data.deskripsi_instruktur}</p>
 
+                                    <hr />
+                                    <h4>Bidang Keahlian:</h4>
+                                    <ul>
+                                        <li>{data.bidang_instruktur}</li>
+                                    </ul>
 
-                            <h4>Biography:</h4>
-                            <p>A professor, informally often known as full professor, is the highest academic rank at universities and other post-secondary education and research institutions in most countries. Literally, professor derives from Latin as a "person who professes" being usually an expert in arts or sciences, a teacher of the highest rank.[1] In some countries, the word professor is also used in titles of lower ranks such as associate professor and assistant professor.</p>
-                            <p>Professors conduct original research and commonly teach undergraduate, graduate, and/or professional courses in their field of expertise. In universities with graduate schools, professors may mentor and supervise graduate students who are conducting research for a thesis or dissertation. Professors typically hold a Ph.D., another doctorate or a different terminal degree. Some professors hold a masters degree or a professional degree such as an MD as their highest degree.</p>
-                            <div className="clearfix"></div>
-                            <hr/>
-                            <h4>Education:</h4>
-                            <ul>
-                                <li>B.Com from Ski University</li>
-                                <li>In hac habitasse platea dictumst.</li>
-                                <li>In hac habitasse platea dictumst.</li>
-                                <li>Vivamus elementum semper nisi.</li>
-                                <li>Praesent ac sem eget est egestas volutpat.</li>
-                            </ul>
-                            <div className="clearfix"></div>
-                            <hr/>
-                            <h4>Competencies:</h4>
-                            <ul>
-                                <li>Integer tincidunt.</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                                <li>Integer tincidunt.</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                                <li>Integer tincidunt.</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                            </ul>
-
-                            <div className="clearfix"></div>
-                            <hr/>
-                            <h4>Experience:</h4>
-                            <ul>
-                                <li>Integer tincidunt.</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                                <li>M.B.B.S from Ski University</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                                <li>Proin pretium, leo ac pellentesque mollis justo.</li>
-                                <li>unc ultrices eros, sed gravida augue augue</li>
-                            </ul>
-                            <div className="clearfix"></div>
-                            <hr/>
-                            <h4>Subjects:</h4>
-                            <ul>
-                                <li>Integer tincidunt.</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                                <li> Phasellus consectetuer vestibulum elit.</li>
-                                <li>M.B.B.S from Ski University</li>
-                                <li>Praesent vestibulum dapibus nibh.</li>
-                                <li>Proin pretium, leo ac pellentesque mollis justo.</li>
-                                <li>unc ultrices eros, sed gravida augue augue</li>
-                            </ul>
-                            <div className="clearfix"></div>
-
-                                    </div>
-
-                            </div>
-                            </section>
-                            </div>
-           
-
-
-
+                                </div>
                                 
-                        </Col>
 
-                    </Row>
-                </div>
-            </div>
-        );
-    }
+                            </div>
+                        </section>
+                    </div>
+
+                </Col>
+            </Row>
+        </div>
+    );
 }
-
-export default ProfessorProfile;

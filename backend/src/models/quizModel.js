@@ -11,7 +11,7 @@ const getAllByMateri = async (id_materi) => {
             created_at
         FROM quiz
         WHERE id_materi = ?
-        ORDER BY created_at DESC
+
     `;
     const [rows] = await pool.execute(sql, [id_materi]);
     return rows;
