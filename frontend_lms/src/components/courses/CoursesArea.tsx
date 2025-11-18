@@ -9,9 +9,8 @@ export default function CoursesArea() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await api.get("/api/course"); // endpoint backend kamu
-        // kalau backend return { data: [...] }
-        setCourses(res.data.data || res.data || []);
+        const res = await api.get("/api/course");
+        setCourses(res.data || []);
       } catch (err) {
         console.error("Gagal ambil data course:", err);
       } finally {
@@ -42,19 +41,18 @@ export default function CoursesArea() {
           </div>
 
           {courses.map((course) => (
-            <div
-              key={course.id_course}
-              className="col-xl-4 col-md-6 col-12 wow fadeIn"
-            >
+            <div key={course.id_course} className="col-xl-4 col-md-6 col-12 wow fadeIn">
               <div className="single-course">
+
+                {/* Thumbnail */}
                 <div className="course-img">
                   <img
                     src={
                       course.thumbnail
-                        ? `http://localhost:5000${course.thumbnail.startsWith('/') ? '' : '/'}${course.thumbnail}`
+                        ? `http://localhost:5000${course.thumbnail.startsWith("/") ? "" : "/"}${course.thumbnail}`
                         : "assets/img/courses/default.jpg"
                     }
-                    alt={course.title}
+                    alt={course.judul_course}
                     style={{
                       width: "100%",
                       height: "250px",
@@ -62,51 +60,48 @@ export default function CoursesArea() {
                       borderRadius: "10px",
                     }}
                   />
-                  <span className="cprice">
-                    {course.price ? `Rp ${course.price}` : "Free"}
-                  </span>
                 </div>
 
+                {/* Content */}
                 <div className="course_content">
-                  <div className="crating">
-                    <a href="#">
-                      <i className="bx bxs-star"></i>
-                      <i className="bx bxs-star"></i>
-                      <i className="bx bxs-star"></i>
-                      <i className="bx bxs-star"></i>
-                      <i className="bx bxs-star"></i>
-                      <span>({course.rating || "5"})</span>
-                    </a>
-                  </div>
-<h2> <Link to={`/course-details/${course.slug}`}> {course.title} </Link> </h2>
-                 
+                  
+                  {/* Judul */}
+                  <h2>
+                    <Link to={`/course-details/${course.slug}`}>
+                      {course.judul_course}
+                    </Link>
+                  </h2>
 
+                  {/* Deskripsi */}
+                  <p className="mt-2 text-muted">
+                    {course.deskripsi_course
+                      ? `${course.deskripsi_course.slice(0, 100)}...`
+                      : "Tidak ada deskripsi"}
+                  </p>
+
+                  {/* Meta info */}
                   <div className="cmeta">
                     <div className="smeta">
-                      <i className="bx bx-user"></i>
-                      {course.students || 0} Students
-                    </div>
-                    <div className="smeta">
-                      <i className="bx bx-file"></i>
-                      {course.lessons || 0} Lessons
-                    </div>
-                    <div className="smeta">
                       <i className="bx bx-time-five"></i>
-                      {course.duration || "-"}
+                      {course.durasi_course || "-"}
+                    </div>
+                    <div className="smeta">
+                      <i className="bx bx-bar-chart-alt"></i>
+                      {course.skill_level}
                     </div>
                   </div>
 
-                  {/* Bagian Instruktur */}
+                  {/* Instruktur */}
                   <div className="course_btm">
                     <div className="cauthor">
-                      <a href="#">
+                      <div className="d-flex align-items-center">
                         <img
                           src={
                             course.foto_instruktur
                               ? `http://localhost:5000${course.foto_instruktur.startsWith('/') ? '' : '/'}${course.foto_instruktur}`
                               : "assets/img/review/default.jpg"
                           }
-                          alt={course.nama_instruktur || "Instructor"}
+                          alt={course.nama_instruktur}
                           style={{
                             width: "40px",
                             height: "40px",
@@ -116,13 +111,14 @@ export default function CoursesArea() {
                           }}
                         />
                         <span>{course.nama_instruktur || "Unknown"}</span>
-                      </a>
+                      </div>
                     </div>
 
                     <div className="ccategory">
-                      <a href="#">{course.category || "General"}</a>
+                      <span>{course.skill_level}</span>
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -133,6 +129,7 @@ export default function CoursesArea() {
               <p>No courses found.</p>
             </div>
           )}
+
         </div>
       </div>
     </section>

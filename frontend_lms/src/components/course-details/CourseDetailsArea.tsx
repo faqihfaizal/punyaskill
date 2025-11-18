@@ -3,11 +3,16 @@ import { useParams } from "react-router-dom";
 import api from "../../services/api";
 import VideoPopup from "../../modals/VideoPopup";
 
+
 export default function CourseDetailsArea() {
   const { slug } = useParams(); // ambil id_course dari URL
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [materi, setMateri] = useState([]);
+  const [quiz, setQuiz] = useState({});
+
+
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -28,6 +33,38 @@ export default function CourseDetailsArea() {
       import("bootstrap/js/dist/tab");
     }
   }, []);
+
+  useEffect(() => {
+    if (!course?.id_course) return;
+
+    const fetchMateri = async () => {
+      try {
+        const res = await api.get(`/api/materi/${course.id_course}`);
+        setMateri(res.data);
+      } catch (err) {
+        console.error("Gagal ambil materi:", err);
+      }
+    };
+
+    fetchMateri();
+  }, [course]);
+
+
+  useEffect(() => {
+    const loadQuiz = async () => {
+      const temp = {};
+
+      for (const m of materi) {
+        const res = await api.get(`/api/quiz/${m.id_materi}`);
+        temp[m.id_materi] = res.data;
+      }
+
+      setQuiz(temp);
+    };
+
+    if (materi.length) loadQuiz();
+  }, [materi]);
+
 
   if (loading) {
     return (
@@ -67,14 +104,13 @@ export default function CourseDetailsArea() {
                 <img
                   src={
                     course.thumbnail
-                      ? `http://localhost:5000${
-                          course.thumbnail.startsWith("/") ? "" : "/"
-                        }${course.thumbnail}`
+                      ? `http://localhost:5000${course.thumbnail.startsWith("/") ? "" : "/"
+                      }${course.thumbnail}`
                       : "/assets/img/courses/default.jpg"
                   }
                   alt={course.title}
                 />
-                {course.video_id && (
+                {/* {course.video_id && (
                   <a
                     onClick={() => setIsVideoOpen(true)}
                     style={{ cursor: "pointer" }}
@@ -82,7 +118,7 @@ export default function CourseDetailsArea() {
                   >
                     ▶
                   </a>
-                )}
+                )} */}
               </div>
 
               {/* META */}
@@ -91,9 +127,8 @@ export default function CourseDetailsArea() {
                   <img
                     src={
                       course.foto_instruktur
-                        ? `http://localhost:5000${
-                            course.foto_instruktur.startsWith("/") ? "" : "/"
-                          }${course.foto_instruktur}`
+                        ? `http://localhost:5000${course.foto_instruktur.startsWith("/") ? "" : "/"
+                        }${course.foto_instruktur}`
                         : "/assets/img/review/default.jpg"
                     }
                     alt="instructor"
@@ -105,14 +140,14 @@ export default function CourseDetailsArea() {
                 </div>
 
                 <div className="smeta">
-                  <span>Category:</span>
-                  <p>{course.category || "General"}</p>
+                  <span>Skill Level:</span>
+                  <p>{course.skill_level || "General"}</p>
                 </div>
 
                 <div className="smeta">
                   <span>Last Update:</span>
                   <p>
-                    {new Date(course.updated_at || Date.now()).toLocaleDateString()}
+                    {new Date(course.last_update || Date.now()).toLocaleDateString()}
                   </p>
                 </div>
               </div>
@@ -162,7 +197,7 @@ export default function CourseDetailsArea() {
                   id="nav-overview"
                   role="tabpanel"
                 >
-                  <p>{course.description || "No description provided."}</p>
+                  <p>{course.deskripsi_course || "No description provided."}</p>
                 </div>
 
                 {/* CURRICULUM (statis dulu) */}
@@ -174,25 +209,27 @@ export default function CourseDetailsArea() {
                   <div className="cd_curriculum">
                     <h3>Course Curriculum</h3>
                     <ul>
-                      <li>
-                        <span>
-                          <i className="bx bx-play-circle"></i> Introduction
-                        </span>
-                        <span className="cd_cur_right">10 Minutes</span>
-                      </li>
-                      <li>
-                        <span>
-                          <i className="bx bx-folder"></i> Module 1: Basics
-                        </span>
-                        <span className="cd_cur_right">30 Minutes</span>
-                      </li>
-                      <li>
-                        <span>
-                          <i className="bx bx-folder"></i> Module 2: Practice
-                        </span>
-                        <span className="cd_cur_right">45 Minutes</span>
-                      </li>
+                      {materi.length > 0 ? (
+                        materi.map((m) => (
+                          <li key={m.id_materi}>
+                            <span>
+                              <i className="bx bx-folder"></i> {m.judul_materi}
+                            </span>
+                            <span className="cd_cur_right">
+                              {m.file_materi ? "PDF" : "Content"}
+                            </span>
+                            {quiz[m.id_materi] && quiz[m.id_materi].map((q) => (
+                              <div className="ms-4" key={q.id_quiz}>
+                                <i className="bx bx-play-circle"></i> Quiz: {q.title}
+                              </div>
+                            ))}
+                          </li>
+                        ))
+                      ) : (
+                        <li>Belum ada materi</li>
+                      )}
                     </ul>
+
                   </div>
                 </div>
 
@@ -207,9 +244,8 @@ export default function CourseDetailsArea() {
                       <img
                         src={
                           course.foto_instruktur
-                            ? `http://localhost:5000${
-                                course.foto_instruktur.startsWith("/") ? "" : "/"
-                              }${course.foto_instruktur}`
+                            ? `http://localhost:5000${course.foto_instruktur.startsWith("/") ? "" : "/"
+                            }${course.foto_instruktur}`
                             : "/assets/img/review/default.jpg"
                         }
                         alt={course.nama_instruktur}
@@ -218,8 +254,8 @@ export default function CourseDetailsArea() {
 
                     <div className="cdin_content">
                       <h4>{course.nama_instruktur}</h4>
-                      <span>{course.keahlian_instruktur || "Instructor"}</span>
-                      <p>{course.bio_instruktur || "No biography available."}</p>
+                      <span>{course.bidang_instruktur || "Instructor"}</span>
+                      <p>{course.deskripsi_instruktur || "No biography available."}</p>
                     </div>
                   </div>
                 </div>
@@ -236,7 +272,7 @@ export default function CourseDetailsArea() {
                       <i className="fa-regular fa-clock"></i> Duration
                     </span>
                     <span className="cside-value">
-                      {course.duration || "N/A"}
+                      {course.durasi_course || "N/A"}
                     </span>
                   </li>
 
@@ -259,13 +295,9 @@ export default function CourseDetailsArea() {
                   </li>
                 </ul>
 
-                <div className="cd_price">
-                  Rp {course.price?.toLocaleString("id-ID") || "Free"}
-                </div>
-
                 <div className="text-center">
                   <a href="#" className="bg_btn bt">
-                    Buy Course
+                    Daftar Course
                   </a>
                 </div>
               </div>

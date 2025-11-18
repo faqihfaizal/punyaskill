@@ -4,7 +4,7 @@ const Course = {
   // LIST
   async list() {
     const [rows] = await pool.query(
-      `SELECT c.*, i.nama_instruktur 
+      `SELECT c.*, i.nama_instruktur , i.foto_instruktur
        FROM course c
        LEFT JOIN instruktur i ON c.id_instruktur = i.id_instruktur
        ORDER BY c.created_at DESC`
@@ -15,7 +15,7 @@ const Course = {
   // DETAIL BY SLUG
   async detail(slug) {
     const [rows] = await pool.query(
-      `SELECT c.*, i.nama_instruktur
+      `SELECT c.*, i.nama_instruktur, i.foto_instruktur, i.bidang_instruktur, i.deskripsi_instruktur
        FROM course c
        LEFT JOIN instruktur i ON c.id_instruktur = i.id_instruktur
        WHERE c.slug = ?
