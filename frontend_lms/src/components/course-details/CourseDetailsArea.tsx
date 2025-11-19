@@ -92,7 +92,7 @@ export default function CourseDetailsArea() {
       <VideoPopup
         isVideoOpen={isVideoOpen}
         setIsVideoOpen={setIsVideoOpen}
-        videoId={course.video_id || "qmGYnJgCW1o"}
+        videoId={"GQ6DKK7rrmU"}
       />
 
       <section className="courses-details section-padding">
@@ -107,10 +107,16 @@ export default function CourseDetailsArea() {
                       ? `http://localhost:5000${course.thumbnail.startsWith("/") ? "" : "/"
                       }${course.thumbnail}`
                       : "/assets/img/courses/default.jpg"
+
                   }
                   alt={course.title}
+                  style={{
+                    objectFit: "cover",
+                    height: "500px",
+                    width: "100%",
+                  }}
                 />
-                {/* {course.video_id && (
+                {(
                   <a
                     onClick={() => setIsVideoOpen(true)}
                     style={{ cursor: "pointer" }}
@@ -118,7 +124,7 @@ export default function CourseDetailsArea() {
                   >
                     ▶
                   </a>
-                )} */}
+                )}
               </div>
 
               {/* META */}
@@ -132,6 +138,13 @@ export default function CourseDetailsArea() {
                         : "/assets/img/review/default.jpg"
                     }
                     alt="instructor"
+                    style={{
+                      objectFit: "cover",
+                      height: "75px",
+                      width: "75px",      // harus sama agar bulet
+                      // borderRadius: "50%", // bikin jadi lingkaran
+                    }}
+
                   />
                   <div className="smeta_text">
                     <span>Instructor:</span>
@@ -215,12 +228,44 @@ export default function CourseDetailsArea() {
                             <span>
                               <i className="bx bx-folder"></i> {m.judul_materi}
                             </span>
+
+                            {/* --- BAGIAN YANG DIPERBAIKI --- */}
                             <span className="cd_cur_right">
-                              {m.file_materi ? "PDF" : "Content"}
+                              {m.file_materi ? (
+                                <a
+                                  href={`http://localhost:5000${m.file_materi.startsWith("/") ? "" : "/"
+                                    }${m.file_materi}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{ textDecoration: 'underline' }} // Opsional: agar terlihat seperti link
+                                >
+                                  PDF
+                                </a>
+                              ) : (
+                                "Content"
+                              )}
                             </span>
+                            {/* --- AKHIR BAGIAN --- */}
+
                             {quiz[m.id_materi] && quiz[m.id_materi].map((q) => (
                               <div className="ms-4" key={q.id_quiz}>
                                 <i className="bx bx-play-circle"></i> Quiz: {q.title}
+
+                                {/* --- TAMBAHAN UNTUK LINK SOAL --- */}
+                                {q.soal_quiz && (
+                                  <a
+                                    href={`http://localhost:5000${q.soal_quiz.startsWith("/") ? "" : "/"
+                                      }${q.soal_quiz}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="ms-3" // Beri sedikit jarak
+                                    style={{ textDecoration: 'underline' }}
+                                  >
+                                    (Lihat Soal PDF)
+                                  </a>
+                                )}
+                                {/* --- AKHIR TAMBAHAN --- */}
+
                               </div>
                             ))}
                           </li>
@@ -229,7 +274,6 @@ export default function CourseDetailsArea() {
                         <li>Belum ada materi</li>
                       )}
                     </ul>
-
                   </div>
                 </div>
 
