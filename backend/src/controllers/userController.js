@@ -46,7 +46,7 @@ const login = async (req, res) => {
 
     // Masukkan role ke JWT payload
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id_user: user.id_user, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -55,7 +55,7 @@ const login = async (req, res) => {
       message: "Login success",
       token,
       user: {
-        id: user.id,
+        id_user: user.id_user,
         fullname: user.fullname,
         email: user.email,
         role: user.role
@@ -73,7 +73,7 @@ const edit = async (req, res) => {
   const { username, fullname, email, password, role } = req.body;
 
   try {
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findById(id_user);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     let hashed = user.password;

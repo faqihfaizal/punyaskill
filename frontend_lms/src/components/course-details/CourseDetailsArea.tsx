@@ -5,12 +5,49 @@ import VideoPopup from "../../modals/VideoPopup";
 
 
 export default function CourseDetailsArea() {
+
+  type CourseType = {
+    id_course: number;
+    title: string;
+    thumbnail: string;
+    foto_instruktur?: string;
+    nama_instruktur?: string;
+    skill_level?: string;
+    last_update?: string;
+    deskripsi_course?: string;
+    durasi_course?: string;
+    lessons?: number;
+    students?: number;
+    bidang_instruktur?: string;
+    deskripsi_instruktur?: string;
+  };
+
+
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
   const { slug } = useParams(); // ambil id_course dari URL
-  const [course, setCourse] = useState(null);
+  const [course, setCourse] = useState<CourseType | null>(null);
   const [loading, setLoading] = useState(true);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [materi, setMateri] = useState([]);
   const [quiz, setQuiz] = useState({});
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [uploads, setUploads] = useState({});
+  const [submitted, setSubmitted] = useState<{ [key: number]: string }>({});
+  const checkSubmitted = async (id_quiz: number) => {
+    try {
+      const res = await api.get(`/api/user-quiz/${user.id_user}/${id_quiz}`);
+      setSubmitted(prev => ({
+        ...prev,
+        [id_quiz]: res.data.jawaban_quiz
+      }));
+    } catch (err) {
+      // kalau 404 berarti belum submit, biarkan kosong
+    }
+  };
+
 
 
 
@@ -62,8 +99,104 @@ export default function CourseDetailsArea() {
       setQuiz(temp);
     };
 
+
     if (materi.length) loadQuiz();
   }, [materi]);
+
+
+  useEffect(() => {
+    const checkEnroll = async () => {
+      if (!user || !course?.id_course) return;
+
+      try {
+        const res = await api.get(`/api/user-course/user/${user.id_user}`);
+        const exists = res.data.find(c => c.id_course === course.id_course);
+
+        setIsEnrolled(!!exists);
+      } catch (err) {
+        console.error("Gagal cek enrollment:", err);
+      }
+    };
+
+    checkEnroll();
+  }, [course]);
+
+  useEffect(() => {
+    Object.values(quiz).forEach((quizList: any) => {
+      quizList.forEach((q: any) => {
+        checkSubmitted(q.id_quiz);
+      });
+    });
+  }, [quiz]);
+
+
+
+
+
+
+  const handleEnroll = async () => {
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
+
+    try {
+      await api.post("/api/user-course/", {
+        id_user: user.id_user,
+        id_course: course.id_course,
+      });
+
+      alert("Berhasil daftar!");
+      setIsEnrolled(true);
+    } catch (err) {
+      if (err.response?.data?.message === "User sudah terdaftar di course ini") {
+        setIsEnrolled(true);
+      } else {
+        console.error(err);
+      }
+    }
+  };
+
+  // TARUH DI SINI, DI LUAR useEffect mana pun
+  const handleFileChange = (e: any, id_quiz: number) => {
+    setUploads((prev) => ({
+      ...prev,
+      [id_quiz]: e.target.files[0],
+    }));
+  };
+
+  const handleSubmitQuiz = async (id_quiz: number) => {
+    if (!uploads[id_quiz]) {
+      alert("Pilih file terlebih dahulu");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("jawaban_quiz", uploads[id_quiz]);
+    formData.append("id_user", user.id_user);
+    formData.append("id_quiz", String(id_quiz));
+
+    try {
+      const res = await api.post("/api/user-quiz/submit", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      alert("Berhasil upload!");
+
+      // 🔥 TAMBAHKAN DI SINI
+      // res.data.jawaban_quiz biasanya sudah berupa path file yg sudah disimpan
+      setSubmitted(prev => ({
+        ...prev,
+        [id_quiz]: res.data.data.jawaban_quiz   // pakai data dari backend, bukan dari nama file local
+      }));
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
+
 
 
   if (loading) {
@@ -85,6 +218,8 @@ export default function CourseDetailsArea() {
       </section>
     );
   }
+
+
 
   return (
     <>
@@ -248,26 +383,44 @@ export default function CourseDetailsArea() {
                             {/* --- AKHIR BAGIAN --- */}
 
                             {quiz[m.id_materi] && quiz[m.id_materi].map((q) => (
-                              <div className="ms-4" key={q.id_quiz}>
-                                <i className="bx bx-play-circle"></i> Quiz: {q.title}
+                              <div key={q.id_quiz} className="mt-3">
+                                <h5>{q.title}</h5>
 
-                                {/* --- TAMBAHAN UNTUK LINK SOAL --- */}
-                                {q.soal_quiz && (
-                                  <a
-                                    href={`http://localhost:5000${q.soal_quiz.startsWith("/") ? "" : "/"
-                                      }${q.soal_quiz}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="ms-3" // Beri sedikit jarak
-                                    style={{ textDecoration: 'underline' }}
-                                  >
-                                    (Lihat Soal PDF)
-                                  </a>
+                                {!isEnrolled ? (
+                                  <p className="text-danger">Daftar course untuk mengerjakan quiz ini.</p>
+                                ) : submitted[q.id_quiz] ? (
+                                  <>
+                                    <p><strong>Jawaban kamu:</strong></p>
+                                    <a
+                                      href={`http://localhost:5000${submitted[q.id_quiz]}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-success"
+                                    >
+                                      Lihat Jawaban
+                                    </a>
+                                  </>
+                                ) : (
+                                  <>
+                                    <input
+                                      type="file"
+                                      accept="application/pdf"
+                                      onChange={(e) => handleFileChange(e, q.id_quiz)}
+                                    />
+                                    <button
+                                      className="btn btn-primary btn-sm mt-2"
+                                      onClick={() => handleSubmitQuiz(q.id_quiz)}
+                                    >
+                                      Upload Jawaban
+                                    </button>
+                                  </>
                                 )}
-                                {/* --- AKHIR TAMBAHAN --- */}
-
                               </div>
                             ))}
+
+
+
+
                           </li>
                         ))
                       ) : (
@@ -340,10 +493,22 @@ export default function CourseDetailsArea() {
                 </ul>
 
                 <div className="text-center">
-                  <a href="#" className="bg_btn bt">
-                    Daftar Course
-                  </a>
+                  {isEnrolled ? (
+                    <a
+                      href={`/learn/${course.slug}`}
+                      className="bg_btn bt"
+                      style={{ backgroundColor: "#4CAF50" }}
+                    >
+                      Mulai Belajar
+                    </a>
+                  ) : (
+                    <button className="bg_btn bt" onClick={handleEnroll}>
+                      Daftar Course
+                    </button>
+                  )}
                 </div>
+
+
               </div>
             </div>
           </div>

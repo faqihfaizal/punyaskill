@@ -1,252 +1,211 @@
-import React from 'react';
-import {
-    Row, Col, Label, Input,
-} from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import { Row, Col, Label, Input, Button } from "reactstrap";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../../../services/api";
 
-import InputMask from 'react-input-mask';
+export default function EditCourse() {
+    const { slug } = useParams();
+    const navigate = useNavigate();
 
-import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
-import moment from 'moment';
-
-// var IMGDIR = import.meta.env.VITE_IMGDIR; // ✅ Solusi untuk Vite
-
-class EditCourse extends React.Component{
-    constructor (props) {
-    super(props)
-    this.state = {
-      startDate: moment()
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(date) {
-    this.setState({
-      startDate: date
+    const [loading, setLoading] = useState(true);
+    const [instrukturs, setInstrukturs] = useState([]);
+    const [form, setForm] = useState({
+        id_instruktur: "",
+        judul_course: "",
+        slug: "",
+        deskripsi_course: "",
+        durasi_course: "",
+        skill_level: "",
+        last_update: "",
+        thumbnail: null,
     });
-  }
+    const [message, setMessage] = useState("");
 
-    render(){
+    useEffect(() => {
+        let mounted = true;
+        const fetchData = async () => {
+            try {
+                const [insRes, courseRes] = await Promise.all([
+                    api.get("/api/instruktur"),
+                    api.get(`/api/course/${slug}`),
+                ]);
 
-        return (
-            <div>
-                <div className="content">
-                    <Row>
-                        <Col xs={12} md={12}>
+                if (!mounted) return;
+                setInstrukturs(Array.isArray(insRes.data) ? insRes.data : []);
 
+                const c = courseRes.data;
+                setForm({
+                    id_instruktur: c.id_instruktur || "",
+                    judul_course: c.judul_course || "",
+                    slug: c.slug || "",
+                    deskripsi_course: c.deskripsi_course || "",
+                    durasi_course: c.durasi_course || "",
+                    skill_level: c.skill_level || "",
+                    last_update: c.last_update || "",
+                    thumbnail: c.thumbnail || null,
+                });
+            } catch (err) {
+                console.error("Gagal load data course/inst:", err);
+                setMessage("Gagal memuat data.");
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+        fetchData();
+        return () => (mounted = false);
+    }, [slug]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((f) => ({ ...f, [name]: value }));
+    };
+
+    const handleFileChange = (e) => {
+        setForm((f) => ({ ...f, thumbnail: e.target.files[0] }));
+    };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("id_instruktur", form.id_instruktur);
+    data.append("judul_course", form.judul_course);
+    data.append("slug", form.slug);
+    data.append("deskripsi_course", form.deskripsi_course);
+    data.append("durasi_course", form.durasi_course);
+    data.append("skill_level", form.skill_level);
+    data.append("last_update", form.last_update);
+    if (form.thumbnail && typeof form.thumbnail !== "string") {
+      data.append("thumbnail", form.thumbnail);
+    }
+
+    try {
+      const res = await api.put(`/api/course/${slug}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setMessage(res.data.message || "Course berhasil diperbarui.");
+      navigate("/admin/university/courses");
+    } catch (err) {
+      console.error("Gagal update course:", err);
+      setMessage(err.response?.data?.message || "Gagal memperbarui course.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm(`Yakin ingin menghapus ${form.judul_course}?`)) {
+      try {
+        await api.delete(`/api/course/${slug}`);
+        alert("Course berhasil dihapus.");
+        navigate("/admin/university/courses");
+      } catch (err) {
+        console.error("Gagal menghapus course:", err);
+        alert("Gagal menghapus course.");
+      }
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+
+    return (
+        <div className="content">
+            <Row>
+                <Col xs={12} md={12}>
                     <div className="page-title">
                         <div className="float-left">
                             <h1 className="title">Edit Course</h1>
                         </div>
                     </div>
 
-
-                            
-
-
-                    <div className="row margin-0">
-                        <div className="col-12">
-                            <section className="box ">
-                                <header className="panel_header">
-                                    <h2 className="title float-left">Basic Info</h2>
-                                    
-                                </header>
-                                <div className="content-body">
-                                    <div className="row">
-                                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
-
-                                            <form>
-                                                <div className="form-row">
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname4">Course Name</label>
-                                                        <input type="text" className="form-control" id="inputname4" placeholder="" defaultValue="Mr. Jack Shaw"/>
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label>Course Start date</label>
-                                                        <div className="controls">
-                                                            <DatePicker selected={this.state.startDate} onChange={this.handleChange} />
-                                                        </div>
-                                                   </div>
-
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname45">Course time length</label>
-                                                        <input type="text" className="form-control" id="inputname45" placeholder="" defaultValue="45 days"/>
-                                                    </div>
-
-
-                                                    <div className="form-group col-md-12">
-                                                      <Label htmlFor="exampleSelect3">Department</Label>
-                                                      <Input type="select" name="select" id="exampleSelect3" defaultValue="MBA">
-                                                        <option>Select</option>
-                                                            <option value="Computer Engineering">Computer Engineering</option>
-                                                            <option value="Architecture">Architecture</option>
-                                                            <option value="MBA">MBA</option>
-                                                            <option value="Automobile Engg.">Automobile Engg.</option>
-                                                            <option value="Civil Engg.">Civil Engg.</option>
-                                                            <option value="Mechanical Engg.">Mechanical Engg.</option>
-                                                            <option value="BBA">BBA</option>
-                                                      </Input>
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname4121">For Students of Year</label>
-                                                        <input type="text" className="form-control" id="inputname4121" placeholder="" defaultValue="Last Year"/>
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname4121">Professor</label>
-                                                        <input type="text" className="form-control" id="inputname4121" placeholder="" defaultValue="Prof. Dean Jackson"/>
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputname41421">Course Price</label>
-                                                        <input type="text" className="form-control" id="inputname41421" placeholder="" defaultValue="$300.00"/>
-                                                    </div>
-
-
-
-                                                    <div className="form-group col-md-12">
-                                                      <Label htmlFor="exampleText">Brief</Label>
-                                                      <Input type="textarea" name="text" id="exampleText" defaultValue="The surgical specialties are the specialties in which an important part of diagnosis and treatmentby surgery." />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                      <Label htmlFor="exampleFile">Course Image</Label>
-                                                      <div className="profileimg-input"><img alt="" src={IMGDIR+"/images/university/courses/course-1.jpg"} className="img-fluid" style={{"width": "120px"}}/></div>
-                                                      <Input type="file" name="file" id="exampleFile" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input4">Website</label>
-                                                        <input type="text" className="form-control" id="input4" placeholder="" defaultValue="http://jackshaw-surgeon.com" />
-                                                    </div>
-
-                                                </div>
-                                                <button type="submit" className="btn btn-primary">Save</button>
-                                            </form>
-
-                                        </div>
-                                    </div>
-
+                    <section className="box">
+                        <header className="panel_header">
+                            <h2 className="title float-left">Edit Course</h2>
+                        </header>
+                        <div className="content-body">
+                            {form.thumbnail && typeof form.thumbnail === "string" && (
+                                <div className="mt-2 mb-3">
+                                    <Label>Thumbnail Saat Ini:</Label><br />
+                                    <img
+                                        src={`http://localhost:5000${form.thumbnail}`}
+                                        alt="thumbnail course"
+                                        width="150"
+                                        className="rounded mt-2"
+                                    />
                                 </div>
-                            </section></div>
+                            )}
 
-
-                        <div className="col-12">
-                            <section className="box ">
-                                <header className="panel_header">
-                                    <h2 className="title float-left">Course Location Info</h2>
-                                </header>
-                                <div className="content-body">
-                                    <div className="row">
-                                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
-
-                                            <form>
-                                                <div className="form-row">
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputEmail4">Email</label>
-                                                        <input type="email" className="form-control" id="inputEmail4" placeholder="" defaultValue="jackshaw@example.com" />
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                       <Label htmlFor="field-11">Phone (+49 99 999 99)</Label>
-                                                       <InputMask id="field-11" className="form-control" mask="+4\9 99 999 99" maskChar="_" defaultValue="+491234567" />
-                                                    </div>
-
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputAddress">Address</label>
-                                                        <input type="text" className="form-control" id="inputAddress" placeholder="1234 Main St"/>
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="inputAddress2">Address 2</label>
-                                                        <input type="text" className="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor"/>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                    <div className="form-row">
-                                                        <div className="form-group col-md-6">
-                                                            <label htmlFor="inputCity">City</label>
-                                                            <input type="text" className="form-control" id="inputCity" defaultValue="Mumbai"/>
-                                                        </div>
-                                                        <div className="form-group col-md-4">
-                                                            <label htmlFor="inputState">State</label>
-                                                            <select id="inputState" className="form-control">
-                                                                <option>Select</option>
-                                                                <option>Maharashtra</option>
-                                                            </select>
-                                                        </div>
-                                                        <div className="form-group col-md-2">
-                                                            <label htmlFor="inputZip">Zip</label>
-                                                            <input type="text" className="form-control" id="inputZip" defaultValue="434222"/>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-
-
-
-                                                </div>
-                                                <button type="submit" className="btn btn-primary">Save</button>
-                                            </form>
-
-                                        </div>
-                                    </div>
-
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <Label>Instruktur</Label>
+                                    <Input
+                                        type="select"
+                                        name="id_instruktur"
+                                        value={form.id_instruktur}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">-- Pilih Instruktur --</option>
+                                        {instrukturs.map((i) => (
+                                            <option key={i.id_instruktur} value={i.id_instruktur}>
+                                                {i.nama_instruktur} — {i.bidang_instruktur}
+                                            </option>
+                                        ))}
+                                    </Input>
                                 </div>
-                            </section></div>
 
-
-
-
-
-                        <div className="col-12">
-                            <section className="box ">
-                                <header className="panel_header">
-                                    <h2 className="title float-left">Social Media Info</h2>
-                                </header>
-                                <div className="content-body">
-                                    <div className="row">
-                                        <div className="col-12 col-sm-12 col-md-10 col-lg-10 col-xl-8">
-
-                                            <form>
-                                                <div className="form-row">
-                                                    
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input24">Facebook URL</label>
-                                                        <input type="text" className="form-control" id="input24" placeholder="" defaultValue="http://facebook.com/jackshaw" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input241">Twitter URL</label>
-                                                        <input type="text" className="form-control" id="input241" placeholder="" defaultValue="http://twitter.com/jackshaw" />
-                                                    </div>
-                                                    <div className="form-group col-md-12">
-                                                        <label htmlFor="input242">Linkedin URL</label>
-                                                        <input type="text" className="form-control" id="input242" placeholder="" defaultValue="http://linkedin.com/jackshaw" />
-                                                    </div>
-                                                    
-                                                </div>
-                                                <button type="submit" className="btn btn-primary">Save</button>
-                                            </form>
-
-                                        </div>
-                                    </div>
-
+                                <div className="form-group">
+                                    <Label>Judul Course</Label>
+                                    <Input type="text" name="judul_course" value={form.judul_course} onChange={handleChange} required />
                                 </div>
-                            </section></div>
 
+                                <div className="form-group">
+                                    <Label>Slug</Label>
+                                    <Input type="text" name="slug" value={form.slug} onChange={handleChange} required />
+                                </div>
 
-                    </div>
+                                <div className="form-group">
+                                    <Label>Deskripsi Course</Label>
+                                    <Input type="textarea" name="deskripsi_course" value={form.deskripsi_course} onChange={handleChange} required />
+                                </div>
 
+                                <div className="form-group">
+                                    <Label>Durasi Course (mis: 3h 20m)</Label>
+                                    <Input type="text" name="durasi_course" value={form.durasi_course} onChange={handleChange} required />
+                                </div>
 
+                                <div className="form-group">
+                                    <Label>Skill Level</Label>
+                                    <Input type="select" name="skill_level" value={form.skill_level} onChange={handleChange} required>
+                                        <option value="">-- Pilih Skill Level --</option>
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                    </Input>
+                                </div>
 
+                                <div className="form-group">
+                                    <Label>Thumbnail</Label>
+                                    <Input type="file" name="thumbnail" accept="image/*" onChange={handleFileChange} />
+                                </div>
 
-
-
-                                
-                        </Col>
-
-                    </Row>
-                </div>
-            </div>
-        );
-    }
+                                <div className="mt-3">
+                                    <Button type="submit" color="primary" className="me-2">
+                                        Simpan Perubahan
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        color="danger"
+                                        onClick={handleDelete}
+                                    >
+                                        Hapus Course
+                                    </Button>
+                                </div>
+                                {message && <p className="mt-3">{message}</p>}
+                            </form>
+                        </div>
+                    </section>
+                </Col>
+            </Row>
+        </div>
+    );
 }
+ 
 
-export default EditCourse;

@@ -15,7 +15,7 @@ interface User {
 
 export default function HeaderOne() {
   const [open, setOpen] = useState(false);
-  const [cat, setCat] = useState(false);
+  // const [cat, setCat] = useState(false);
   const [opneMenu, setOpneMenu] = useState(false);
 
   // gunakan tipe User, bukan any
@@ -84,7 +84,7 @@ export default function HeaderOne() {
           <div className="row">
             <div className="col-30 left-col align-self-center rk_style">
               <div className="site-logo">
-                <Link to="/"><img src="assets/img/logo.svg" alt="Edumon" /></Link>
+                <Link to="/"><img src="../assets/img/logopunyaskill.png" alt="Edumon" style={{ width: "100px" }}/></Link>
               </div>
             </div>
 
@@ -100,13 +100,13 @@ export default function HeaderOne() {
                   {/* svg omitted for brevity, paste yours */}
                   <svg fill="none" viewBox="0 0 20 20">...</svg>
                 </a>
-                <div className="cart-icon">
+                {/* <div className="cart-icon"> */}
                   {/* perbaikan: toggle harus menggunakan cat, bukan open */}
-                  <a style={{ cursor: "pointer" }} onClick={() => setCat(!cat)} className="mcart_open" data-menu="#mini_cart">
+                  {/* <a style={{ cursor: "pointer" }} onClick={() => setCat(!cat)} className="mcart_open" data-menu="#mini_cart">
                     <svg fill="none" viewBox="0 0 17 19">...</svg>
                   </a>
                   <span>3</span>
-                </div>
+                </div> */}
               </div>
 
               {/* Rendering berdasarkan auth */}
@@ -126,9 +126,9 @@ export default function HeaderOne() {
         </div>
 
         {/* isi mini_cart, search_box, mobile menu sama seperti sebelumnya */}
-        <div id="mini_cart" className={`cart_drawer ${cat ? 'min_cart_active' : ''}`}>
+        {/* <div id="mini_cart" className={`cart_drawer ${cat ? 'min_cart_active' : ''}`}> */}
           {/* ... isi mini cart ... */}
-        </div>
+        {/* </div> */}
 
         <div className={`search_box ${open ? "active" : ""}`}>
           <div className="close-btn" onClick={() => setOpen(false)} style={{ display: open ? "block" : "none" }}>

@@ -15,12 +15,14 @@ module.exports = {
     // Ambil course berdasarkan user login
     listByUser(id_user) {
         return pool.query(`
-            SELECT uc.*, c.judul_course, c.slug, c.thumbnail
-            FROM user_course uc
-            JOIN course c ON c.id_course = uc.id_course
-            WHERE uc.id_user = ?
-        `, [id_user]);
+        SELECT uc.*, c.judul_course, c.slug, c.thumbnail
+        FROM user_course uc
+        JOIN course c ON c.id_course = uc.id_course
+        WHERE uc.id_user = ?
+        ORDER BY uc.enrolled_at DESC
+    `, [id_user]);
     },
+
 
     // Enroll user ke course
     insert(data) {

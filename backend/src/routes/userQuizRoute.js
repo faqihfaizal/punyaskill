@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userQuizController = require("../controllers/userQuizController");
-const upload = require("../middleware/upload"); // pastikan sudah ada
+const upload = require("../middleware/uploadfile"); // pastikan sudah ada
 
 // POST /submit (upload file + insert/update)
 router.post(
@@ -21,6 +21,8 @@ router.put(
     "/score/:id_user/:id_quiz",
     userQuizController.updateScore
 );
+router.get("/by-user/:id_user", userQuizController.getByUser);
+
 
 
 module.exports = router;

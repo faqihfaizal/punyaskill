@@ -18,15 +18,16 @@ exports.submitQuiz = async (req, res) => {
 
         // Jika pernah submit → update
         if (existing) {
-            // Hapus file lama
+
+            // Hapus file lama jika ada
             if (existing.jawaban_quiz) {
                 const oldFile = path.join(process.cwd(), existing.jawaban_quiz.replace(/^\//, ""));
                 deleteFileIfExists(oldFile);
             }
 
             const payload = {
-                jawaban_quiz: fileAbsPath || existing.jawaban_quiz,
-                score,
+                jawaban_quiz: fileAbsPath || existing.jawaban_quiz
+                // score tidak diubah disini
             };
 
             const resUpdate = await userQuiz.update(id_user, id_quiz, payload);
@@ -55,6 +56,7 @@ exports.submitQuiz = async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 };
+
 
 // =================== GET HASIL QUIZ ===================
 exports.getUserQuiz = async (req, res) => {
@@ -114,3 +116,18 @@ exports.updateScore = async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 };
+// Ambil jawaban quiz user
+exports.getByUser = async (req, res) => {
+    const { id_user } = req.params;
+
+    try {
+        const [rows] = await db.query(
+            "SELECT id_quiz, jawaban_quiz FROM user_quiz WHERE id_user = ?",
+            [id_user]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+

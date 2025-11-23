@@ -66,7 +66,7 @@ var dashRoutes = [
 
                 { path: BASEDIR+"/university/add-course", name: "Add Course"},
 
-                { path: BASEDIR+"/university/edit-course", name: "Edit Course"},
+                // { path: BASEDIR+"/university/edit-course", name: "Edit Course"},
 
             ]
 
@@ -76,7 +76,7 @@ var dashRoutes = [
 
         { path: BASEDIR+"/university/add-course", component: AddCourse, type: "child"},
 
-        { path: BASEDIR+"/university/edit-course", component: EditCourse, type: "child"},
+        { path: BASEDIR+"/university/edit-course/:slug", component: EditCourse, type: "child"},
 
         { path: BASEDIR+"/university/course-view/:slug", component: CourseView, type: "child"},
 

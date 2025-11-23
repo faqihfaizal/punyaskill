@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom"; // ⬅️ Link ditambah
 import api from "../../../services/api";
 
 const BASEDIR = import.meta.env.VITE_REACT_APP_BASEDIR;
+
 
 export default function Courseslist() {
     const [courses, setCourses] = useState([]);
@@ -79,6 +80,14 @@ export default function Courseslist() {
                                             ? `${course.deskripsi_course.slice(0, 300)}...`
                                             : "Tidak ada deskripsi"}
                                     </p>
+                                    <div className="mt-2">
+                                        <Link
+                                            to={`${BASEDIR}/university/edit-course/${course.slug}`}
+                                            className="btn btn-sm btn-primary"
+                                        >
+                                            Edit
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
